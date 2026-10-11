@@ -47,7 +47,6 @@ jobs:
           fi
 
       - name: Download Paper 26.2 server
-        working-directory: /tmp/paper
         run: |
           set -euo pipefail
           mkdir -p /tmp/paper && cd /tmp/paper
