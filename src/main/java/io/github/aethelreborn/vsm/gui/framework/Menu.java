@@ -137,13 +137,11 @@ public class Menu implements InventoryHolder {
             ItemStack item = new ItemStack(material, amount);
             ItemMeta meta = item.getItemMeta();
             if (meta != null) {
-                meta.setDisplayName(net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
-                        .legacyAmpersand().deserialize(displayName));
+                meta.setDisplayName(plain(displayName));
                 if (!lore.isEmpty()) {
-                    List<net.kyori.adventure.text.Component> lines = new ArrayList<>();
+                    List<String> lines = new ArrayList<>(lore.size());
                     for (String line : lore) {
-                        lines.add(net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
-                                .legacyAmpersand().deserialize(line));
+                        lines.add(plain(line));
                     }
                     meta.lore(lines);
                 }
@@ -153,6 +151,17 @@ public class Menu implements InventoryHolder {
             return item;
         }
 
+        /** MiniMessage rendered to plain text so the item meta never carries player formatting. */
+        static String plain(String input) {
+            try {
+                return net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText()
+                        .serialize(net.kyori.adventure.text.minimessage.MiniMessage.miniMessage()
+                                .deserialize(io.github.aethelreborn.vsm.config.Messages.toMiniMessage(input)));
+            } catch (RuntimeException ex) {
+                return input;
+            }
+        }
+
         public void click(ClickContext context) {
             if (action != null) {
                 action.accept(context);
@@ -160,16 +169,17 @@ public class Menu implements InventoryHolder {
         }
     }
 
+    /** Click kind reported to the handlers. */
+    public enum ClickType {
+        LEFT,
+        RIGHT,
+        SHIFT_LEFT,
+        SHIFT_RIGHT,
+        MIDDLE
+    }
+
     /** Context handed to every click handler. */
     public record ClickContext(Player viewer, Menu menu, int slot, ClickType clickType, MenuItem item) {
-
-        public enum ClickType {
-            LEFT,
-            RIGHT,
-            SHIFT_LEFT,
-            SHIFT_RIGHT,
-            MIDDLE
-        }
     }
 
     /** Debounce map so a double click cannot run an action twice. */

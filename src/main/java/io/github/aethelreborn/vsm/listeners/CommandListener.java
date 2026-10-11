@@ -42,9 +42,8 @@ public final class CommandListener implements Listener {
 
         // Frozen players may only use the whitelist (spec 11.2).
         if (plugin.freezeService().isFrozen(uuid)) {
-            String[] allowed = plugin.vsmConfig().youtuberFreezeAllowedCommands().toArray(new String[0]);
-            String[] staffAllowed = plugin.vsmConfig().freezeAllowedCommands().toArray(new String[0]);
-            boolean permitted = matches(command, allowed) || matches(command, staffAllowed);
+            boolean permitted = matches(command, plugin.vsmConfig().youtuberFreezeAllowedCommands())
+                    || matches(command, plugin.vsmConfig().freezeAllowedCommands());
             if (!permitted) {
                 event.setCancelled(true);
                 plugin.messageService().send(player, "frozen-command-blocked");
@@ -55,7 +54,7 @@ public final class CommandListener implements Listener {
         // Muted players lose chat-like commands (spec 9.5).
         List<Punishment> mutes = plugin.punishmentCache().activeMutes(uuid, now);
         if (!mutes.isEmpty()) {
-            String ip = player.getAddress() == null ? null : player.getAddress().getHostAddress();
+            String ip = player.getAddress() == null ? null : player.getAddress().getAddress().getHostAddress();
             if (ip != null) {
                 mutes = new java.util.ArrayList<>(mutes);
                 mutes.addAll(plugin.ipService().activeIpMutes(ip, now));
@@ -88,6 +87,23 @@ public final class CommandListener implements Listener {
                 && !plugin.permissionService().has(player, PermissionNodes.CHAT_BYPASS);
     }
 
+    private boolean matches(String command, String allowed) {
+        if (allowed == null) {
+            return false;
+        }
+        String normalised = allowed.toLowerCase(Locale.ROOT);
+        return command.equals(normalised) || command.startsWith(normalised + " ");
+    }
+
+    private boolean matches(String command, List<String> allowed) {
+        for (String candidate : allowed) {
+            if (matches(command, candidate)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private boolean matches(String command, String[] allowed) {
         for (String candidate : allowed) {
             String normalised = candidate.toLowerCase(Locale.ROOT);
@@ -111,7 +127,7 @@ public final class CommandListener implements Listener {
                     "player", player.getName(),
                     "command", safeCommand,
                     "ip", plugin.ipService().display(
-                            player.getAddress() == null ? null : player.getAddress().getHostAddress(),
+                            player.getAddress() == null ? null : player.getAddress().getAddress().getHostAddress(),
                             staff));
         }
         // Watchlist players are monitored even when nobody explicitly enabled spy.

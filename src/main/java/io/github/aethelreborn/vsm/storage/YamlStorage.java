@@ -339,7 +339,7 @@ public final class YamlStorage implements StorageProvider {
 
     private static List<Punishment> page(List<Punishment> list, int page, int size) {
         List<Punishment> sorted = new ArrayList<>(list);
-        sorted.sort(Comparator.comparingLong(Punishment::issuedAt).reversed());
+        sorted.sort(Comparator.comparingLong((Punishment punishment) -> punishment.issuedAt()).reversed());
         int from = Math.min(Math.max(0, page * size), sorted.size());
         int to = Math.min(from + size, sorted.size());
         return new ArrayList<>(sorted.subList(from, to));
@@ -439,7 +439,7 @@ public final class YamlStorage implements StorageProvider {
                 out.add(new IpRecord(uuid, node.getString("ip"), node.getLong("first-seen"),
                         node.getLong("last-seen"), node.getInt("times-seen", 1)));
             }
-            out.sort(Comparator.comparingLong(IpRecord::lastSeen).reversed());
+            out.sort(Comparator.comparingLong((IpRecord record) -> record.lastSeen()).reversed());
             return out;
         });
     }
@@ -586,7 +586,7 @@ public final class YamlStorage implements StorageProvider {
             }
             out.add(note);
         }
-        out.sort(Comparator.comparingLong(PlayerNote::createdAt).reversed());
+        out.sort(Comparator.comparingLong((PlayerNote note) -> note.createdAt()).reversed());
         return out;
     }
 
@@ -673,7 +673,7 @@ public final class YamlStorage implements StorageProvider {
                     out.add(readReport(node));
                 }
             }
-            out.sort(Comparator.comparingLong(Report::createdAt).reversed());
+            out.sort(Comparator.comparingLong((Report report) -> report.createdAt()).reversed());
             return out;
         });
     }
@@ -789,7 +789,7 @@ public final class YamlStorage implements StorageProvider {
                         .hash(node.getString("hash", ""));
                 out.add(entry);
             }
-            out.sort(Comparator.comparingLong(AuditEntry::timestamp));
+            out.sort(Comparator.comparingLong((AuditEntry entry) -> entry.timestamp()));
             return out;
         });
     }

@@ -460,7 +460,7 @@ public final class StaffModeService {
                 yaml.loadFromString(text.replace("\\n", "\n"));
                 ItemStack item = yaml.getItemStack("item");
                 return item == null || item.getType().isAir() ? null : item;
-            } catch (RuntimeException ex) {
+            } catch (Exception ex) {
                 return null;
             }
         }

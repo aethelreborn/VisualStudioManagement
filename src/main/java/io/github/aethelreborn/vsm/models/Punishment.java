@@ -177,8 +177,18 @@ public final class Punishment {
         return removedBy;
     }
 
+    public Punishment removedBy(UUID removedBy) {
+        this.removedBy = removedBy;
+        return this;
+    }
+
     public String removedByName() {
         return removedByName;
+    }
+
+    public Punishment removedByName(String removedByName) {
+        this.removedByName = removedByName;
+        return this;
     }
 
     public long removedAt() {
