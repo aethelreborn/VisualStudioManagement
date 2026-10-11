@@ -115,6 +115,15 @@ class RankRegistryTest {
     }
 
     @Test
+    @DisplayName("promote and demote skip the youtuber side branch (spec 6.2a)")
+    void sideBranchIsNotALadderStep() {
+        assertEquals("moderator", registry.promote("youtuber").id());
+        assertEquals("player", registry.demote("youtuber").id());
+        assertTrue(registry.isSideBranch(registry.rank("youtuber")));
+        assertFalse(registry.isSideBranch(registry.rank("moderator")));
+    }
+
+    @Test
     @DisplayName("outranking requires a strictly lower weight")
     void outranking() {
         assertTrue(RankRegistry.outranks(80, 40));

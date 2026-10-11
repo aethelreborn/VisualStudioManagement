@@ -119,7 +119,17 @@ public final class TemplateRegistry {
         long duration = defaultDuration(type);
         Object rawDuration = map.get("duration");
         if (rawDuration != null) {
-            duration = parseDuration(String.valueOf(rawDuration), index, type, problems);
+            if (!isPermanentToken(String.valueOf(rawDuration))) {
+                try {
+                    duration = TimeParser.parse(String.valueOf(rawDuration));
+                } catch (IllegalArgumentException ex) {
+                    problems.add("template '" + templateId + "' step " + index
+                            + " has an invalid duration '" + rawDuration + "'");
+                    return null;
+                }
+            } else {
+                duration = TimeParser.PERMANENT;
+            }
         }
         Set<String> flags = new LinkedHashSet<>();
         Object rawFlags = map.get("flags");
@@ -129,6 +139,10 @@ public final class TemplateRegistry {
             }
         }
         return new LadderStep(type, duration, flags);
+    }
+
+    private static boolean isPermanentToken(String raw) {
+        return raw == null || raw.isBlank() || raw.equalsIgnoreCase("permanent");
     }
 
     private long parseDuration(String raw, int index, PunishmentType type, List<String> problems) {
@@ -166,12 +180,13 @@ public final class TemplateRegistry {
 
     /** The lowest unmet warning threshold, or {@code null} when nothing applies. */
     public WarningThreshold thresholdFor(int activeWarnings) {
+        WarningThreshold match = null;
         for (Map.Entry<Integer, WarningThreshold> entry : warningThresholds.entrySet()) {
             if (activeWarnings >= entry.getKey()) {
-                return entry.getValue();
+                match = entry.getValue();
             }
         }
-        return null;
+        return match;
     }
 
     public List<String> problems() {

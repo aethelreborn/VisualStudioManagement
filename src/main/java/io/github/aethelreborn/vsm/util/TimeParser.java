@@ -184,11 +184,11 @@ public final class TimeParser {
         if (millis % UNIT_MONTH == 0L) {
             return (millis / UNIT_MONTH) + "mo";
         }
-        if (millis % UNIT_WEEK == 0L) {
-            return (millis / UNIT_WEEK) + "w";
-        }
         if (millis % UNIT_DAY == 0L) {
             return (millis / UNIT_DAY) + "d";
+        }
+        if (millis % UNIT_WEEK == 0L) {
+            return (millis / UNIT_WEEK) + "w";
         }
         if (millis % UNIT_HOUR == 0L) {
             return (millis / UNIT_HOUR) + "h";

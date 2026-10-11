@@ -69,7 +69,7 @@ public enum PunishmentType {
     public PunishmentType permanentVariant() {
         return switch (this) {
             case TEMP_WARN -> WARN;
-            case TEMP_MUTE, SHADOW_MUTE -> MUTE;
+            case TEMP_MUTE -> MUTE;
             case TEMP_IP_MUTE -> IP_MUTE;
             case TEMP_BAN -> BAN;
             case TEMP_IP_BAN -> IP_BAN;
@@ -94,12 +94,25 @@ public enum PunishmentType {
         if (raw == null) {
             return null;
         }
-        String text = raw.trim().toUpperCase(Locale.ROOT).replace('-', '_').replace(' ', '_');
+        String text = normalise(raw);
         for (PunishmentType type : values()) {
-            if (type.name().equals(text)) {
+            if (normalise(type.name()).equals(text)) {
                 return type;
             }
         }
         return null;
+    }
+
+    /** Strips separators so {@code ipban}, {@code ip-ban} and {@code IP_BAN} all match. */
+    private static String normalise(String raw) {
+        StringBuilder out = new StringBuilder(raw.length());
+        String upper = raw.trim().toUpperCase(Locale.ROOT);
+        for (int i = 0; i < upper.length(); i++) {
+            char c = upper.charAt(i);
+            if (c != '-' && c != '_' && c != ' ') {
+                out.append(c);
+            }
+        }
+        return out.toString();
     }
 }

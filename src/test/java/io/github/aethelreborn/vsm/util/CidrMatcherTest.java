@@ -64,7 +64,7 @@ class CidrMatcherTest {
     @Test
     @DisplayName("exposes the normalised network address")
     void exposesNetwork() {
-        assertEquals(5, CidrMatcher.parse("203.0.113.0/24").prefixLength());
+        assertEquals(24, CidrMatcher.parse("203.0.113.0/24").prefixLength());
         assertEquals(8, CidrMatcher.parse("10.0.0.0/8").prefixLength());
         assertEquals(0, CidrMatcher.parse("0.0.0.0/0").prefixLength());
     }

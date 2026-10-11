@@ -35,6 +35,9 @@ public final class FlagParser {
             String token = arg.trim();
             if (token.length() > 1 && token.charAt(0) == '-') {
                 String name = token.substring(1).toLowerCase(Locale.ROOT);
+                while (name.startsWith("-")) {
+                    name = name.substring(1);
+                }
                 switch (name) {
                     case "s", "silent" -> parser.silent = true;
                     case "p", "public" -> parser.forcePublic = true;

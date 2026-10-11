@@ -112,11 +112,19 @@ public final class RankRegistry {
         return byWeight;
     }
 
-    /** The next rank up the ladder, or {@code null} when already at the top. */
+    /**
+     * The next rank up the ladder, or {@code null} when already at the top.
+     *
+     * <p>Side branches such as {@code youtuber} are skipped: they are not steps on the ladder (spec 6.2a).
+     */
     public StaffRank promote(String rankId) {
-        for (int i = 0; i < byWeight.size(); i++) {
-            if (byWeight.get(i).id().equals(rankId)) {
-                return i + 1 < byWeight.size() ? byWeight.get(i + 1) : null;
+        int index = indexOf(rankId);
+        if (index < 0) {
+            return null;
+        }
+        for (int i = index + 1; i < byWeight.size(); i++) {
+            if (!isSideBranch(byWeight.get(i))) {
+                return byWeight.get(i);
             }
         }
         return null;
@@ -124,12 +132,30 @@ public final class RankRegistry {
 
     /** The next rank down the ladder, or {@code null} when already at the bottom. */
     public StaffRank demote(String rankId) {
-        for (int i = 0; i < byWeight.size(); i++) {
-            if (byWeight.get(i).id().equals(rankId)) {
-                return i > 0 ? byWeight.get(i - 1) : null;
+        int index = indexOf(rankId);
+        if (index < 0) {
+            return null;
+        }
+        for (int i = index - 1; i >= 0; i--) {
+            if (!isSideBranch(byWeight.get(i))) {
+                return byWeight.get(i);
             }
         }
         return null;
+    }
+
+    private int indexOf(String rankId) {
+        for (int i = 0; i < byWeight.size(); i++) {
+            if (byWeight.get(i).id().equals(rankId)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /** A non-staff rank with a weight above zero is a side branch, not a ladder step. */
+    public boolean isSideBranch(StaffRank rank) {
+        return rank != null && !rank.staff() && rank.weight() > 0;
     }
 
     public int weight(String rankId) {
