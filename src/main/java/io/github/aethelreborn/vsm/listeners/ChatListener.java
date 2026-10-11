@@ -42,7 +42,7 @@ public final class ChatListener implements Listener {
         // 1. Mute by UUID and by IP (spec 9.5).
         List<Punishment> mutes = new java.util.ArrayList<>(
                 plugin.punishmentCache().activeMutes(uuid, now));
-        String ip = player.getAddress() == null ? null : player.getAddress().getAddress().getHostAddress();
+        String ip = player.getAddress() == null ? null : player.getAddress().getHostAddress();
         if (ip != null) {
             mutes.addAll(plugin.ipService().activeIpMutes(ip, now));
         }

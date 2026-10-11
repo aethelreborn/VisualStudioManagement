@@ -59,6 +59,16 @@ public final class MessageService {
         util.sendRaw(to, key, placeholders);
     }
 
+    /** Renders a message without the plugin prefix. */
+    public Component raw(String key, Object... placeholders) {
+        return util.raw(key, placeholders);
+    }
+
+    /** Renders a multi-line screen such as a ban message. */
+    public Component screen(String key, Object... placeholders) {
+        return util.raw(key, placeholders);
+    }
+
     // ------------------------------------------------------------ screens
     private static String screenKey(PunishmentType type) {
         return switch (type) {

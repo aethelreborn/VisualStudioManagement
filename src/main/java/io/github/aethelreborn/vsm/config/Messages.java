@@ -9,7 +9,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -106,13 +106,55 @@ public final class Messages {
             resolvers.add(Placeholder.unparsed(entry.getKey(), value));
         }
         TagResolver[] array = resolvers.toArray(new TagResolver[0]);
-        String prepared = legacyColorCodes ? LegacyComponentSerializer.legacyAmpersand().deserialize(text) : text;
+        String prepared = legacyColorCodes ? toMiniMessage(text) : text;
         try {
             return MiniMessage.miniMessage().deserialize(prepared, array);
         } catch (RuntimeException ex) {
             // A malformed message must never take the server down; fall back to plain text.
             return Component.text(prepared);
         }
+    }
+
+    /** Translates {@code &a}-style codes into MiniMessage tags (spec 3.3 legacy option). */
+    public static String toMiniMessage(String input) {
+        StringBuilder out = new StringBuilder(input.length());
+        for (int i = 0; i < input.length(); i++) {
+            char c = input.charAt(i);
+            if ((c == '&' || c == '§') && i + 1 < input.length()) {
+                char code = Character.toLowerCase(input.charAt(i + 1));
+                String tag = switch (code) {
+                    case '0' -> "<black>";
+                    case '1' -> "<dark_blue>";
+                    case '2' -> "<dark_green>";
+                    case '3' -> "<dark_aqua>";
+                    case '4' -> "<dark_red>";
+                    case '5' -> "<dark_purple>";
+                    case '6' -> "<gold>";
+                    case '7' -> "<gray>";
+                    case '8' -> "<dark_gray>";
+                    case '9' -> "<blue>";
+                    case 'a' -> "<green>";
+                    case 'b' -> "<aqua>";
+                    case 'c' -> "<red>";
+                    case 'd' -> "<light_purple>";
+                    case 'e' -> "<yellow>";
+                    case 'f' -> "<white>";
+                    case 'k' -> "<obfuscated>";
+                    case 'l' -> "<bold>";
+                    case 'm' -> "<strikethrough>";
+                    case 'n' -> "<underlined>";
+                    case 'o' -> "<italic>";
+                    default -> null;
+                };
+                if (tag != null) {
+                    out.append(tag);
+                    i++;
+                    continue;
+                }
+            }
+            out.append(c);
+        }
+        return out.toString();
     }
 
     /** Builds a placeholder map, skipping null values. */

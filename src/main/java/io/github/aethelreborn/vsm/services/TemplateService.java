@@ -114,7 +114,7 @@ public final class TemplateService {
         }
         ActionRequest request = ActionRequest.builder(ActionSource.AUTOMOD)
                 .kind(ActionRequest.Kind.PUNISH)
-                .consoleActor()
+                .console()
                 .permission(permissionFor(threshold.type()))
                 .punishment(threshold.type())
                 .target(warning.targetUuid(), warning.targetName())

@@ -44,7 +44,7 @@ public final class JoinListener implements Listener {
         plugin.watchService().alertJoin(player);
 
         // Alt detection (spec 11.8).
-        String ip = player.getAddress() == null ? null : player.getAddress().getAddress().getHostAddress();
+        String ip = player.getAddress() == null ? null : player.getAddress().getHostAddress();
         if (ip != null && plugin.vsmConfig().altsAlertOnBannedLink()) {
             plugin.scheduler().async(() -> {
                 if (!plugin.ipService().linkedToBannedAccount(uuid, ip)) {

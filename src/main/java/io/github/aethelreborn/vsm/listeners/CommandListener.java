@@ -55,7 +55,7 @@ public final class CommandListener implements Listener {
         // Muted players lose chat-like commands (spec 9.5).
         List<Punishment> mutes = plugin.punishmentCache().activeMutes(uuid, now);
         if (!mutes.isEmpty()) {
-            String ip = player.getAddress() == null ? null : player.getAddress().getAddress().getHostAddress();
+            String ip = player.getAddress() == null ? null : player.getAddress().getHostAddress();
             if (ip != null) {
                 mutes = new java.util.ArrayList<>(mutes);
                 mutes.addAll(plugin.ipService().activeIpMutes(ip, now));
@@ -111,7 +111,7 @@ public final class CommandListener implements Listener {
                     "player", player.getName(),
                     "command", safeCommand,
                     "ip", plugin.ipService().display(
-                            player.getAddress() == null ? null : player.getAddress().getAddress().getHostAddress(),
+                            player.getAddress() == null ? null : player.getAddress().getHostAddress(),
                             staff));
         }
         // Watchlist players are monitored even when nobody explicitly enabled spy.

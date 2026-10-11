@@ -42,11 +42,11 @@ public final class WatchService {
     }
 
     public boolean watching(UUID uuid) {
-        return storage.watchEntry(uuid).isPresent();
+        return storage.watchEntry(uuid).join().isPresent();
     }
 
     public Optional<WatchEntry> entry(UUID uuid) {
-        return storage.watchEntry(uuid);
+        return storage.watchEntry(uuid).join();
     }
 
     public List<WatchEntry> all() {

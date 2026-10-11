@@ -30,7 +30,8 @@ public final class PreLoginListener implements Listener {
         }
         long now = System.currentTimeMillis();
         var uuid = event.getUniqueId();
-        var rawIp = event.getAddress() == null ? null : event.getAddress().getAddress().getHostAddress();
+        java.net.InetAddress address = event.getAddress();
+        String rawIp = address == null ? null : address.getHostAddress();
 
         // 5. Record the login IP (after the checks so a rejected player is not tracked twice).
         String storedIp = plugin.ipService().store(rawIp);

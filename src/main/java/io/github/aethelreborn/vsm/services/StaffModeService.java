@@ -234,10 +234,12 @@ public final class StaffModeService {
             if (item == null || item.getType().isAir()) {
                 continue;
             }
-            Files.writeString(directory.resolve(slot + ".yml"), serializeItem(item), StandardCharsets.UTF_8);
+            Files.writeString(directory.resolve(slot + ".yml"),
+                    SerializationHelper.serializeItem(item), StandardCharsets.UTF_8);
         }
         if (offHand != null && !offHand.getType().isAir()) {
-            Files.writeString(directory.resolve("offhand.yml"), serializeItem(offHand), StandardCharsets.UTF_8);
+            Files.writeString(directory.resolve("offhand.yml"),
+                    SerializationHelper.serializeItem(offHand), StandardCharsets.UTF_8);
         }
     }
 

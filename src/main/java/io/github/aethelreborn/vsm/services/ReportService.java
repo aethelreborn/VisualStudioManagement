@@ -99,7 +99,7 @@ public final class ReportService {
         report.createdAt(now);
         report.status(Report.Status.OPEN);
         report.priority(Report.Priority.NORMAL);
-        Report stored = storage.createReport(report);
+        Report stored = storage.createReport(report).join();
         lastReport.put(reporterUuid, now);
 
         // Escalate priority when several reporters target the same player inside the window.

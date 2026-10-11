@@ -48,7 +48,7 @@ public final class PlayerInfoMenu extends Menu {
         lore.add("&7Ping: &f" + target.getPing() + "ms");
         lore.add("&7World: &f" + target.getWorld().getName());
         lore.add("&7IP: &f" + plugin.ipService().display(
-                target.getAddress() == null ? null : target.getAddress().getAddress().getHostAddress(), viewer));
+                target.getAddress() == null ? null : target.getAddress().getHostAddress(), viewer));
         lore.add("&7Active punishments: &f"
                 + plugin.punishmentCache().activeFor(uuid, now).size());
         lore.add("&7Warnings: &f" + plugin.punishmentCache().activeWarnings(uuid, now).size());

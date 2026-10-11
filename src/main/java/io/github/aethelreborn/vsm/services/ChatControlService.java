@@ -20,7 +20,7 @@ public final class ChatControlService {
 
     private volatile boolean chatLocked;
     private volatile long slowModeSeconds;
-    private volatile UUID chatLockedBy = "system";
+    private volatile String chatLockedBy = "system";
 
     public ChatControlService(VsmConfig config, PermissionService permissions, AuditService audit,
                               MessageService messages) {
@@ -45,7 +45,7 @@ public final class ChatControlService {
 
     public boolean toggleChatLock(Player actor, UUID actorUuid, String actorName) {
         chatLocked = !chatLocked;
-        chatLockedBy = actorUuid;
+        chatLockedBy = actorUuid == null ? "console" : actorUuid.toString();
         audit.log(ActionSource.COMMAND, actorUuid, actorName,
                 chatLocked ? "MUTECHAT_ON" : "MUTECHAT_OFF", null, null, "");
         broadcast("mutechat-toggled", actorName);
@@ -122,7 +122,7 @@ public final class ChatControlService {
     }
 
     public String lockedBy() {
-        return chatLockedBy == null ? "system" : chatLockedBy.toString();
+        return chatLockedBy == null ? "system" : chatLockedBy;
     }
 
     public VsmConfig config() {

@@ -63,7 +63,7 @@ public final class AutoModService {
         }
 
         // Character flood and unicode abuse
-        char flood = longestRun(message);
+        int flood = longestRun(message);
         if (flood >= config.maxCharFlood()) {
             addPoints(player, 2);
             return new ChatResult(true, null, true, "char-flood");
@@ -175,7 +175,7 @@ public final class AutoModService {
     private void warn(Player player, String violation) {
         actions.execute(ActionRequest.builder(ActionSource.AUTOMOD)
                 .kind(ActionRequest.Kind.PUNISH)
-                .consoleActor()
+                .console()
                 .permission(PermissionNodes.WARN)
                 .punishment(PunishmentType.WARN)
                 .target(player.getUniqueId(), player.getName())
@@ -187,7 +187,7 @@ public final class AutoModService {
     private void tempMute(Player player, String violation) {
         actions.execute(ActionRequest.builder(ActionSource.AUTOMOD)
                 .kind(ActionRequest.Kind.PUNISH)
-                .consoleActor()
+                .console()
                 .permission(PermissionNodes.TEMP_MUTE)
                 .punishment(PunishmentType.TEMP_MUTE)
                 .target(player.getUniqueId(), player.getName())
@@ -250,8 +250,8 @@ public final class AutoModService {
         return config.problems();
     }
 
-    private static char longestRun(String message) {
-        char best = 0;
+    private static int longestRun(String message) {
+        int best = 0;
         char current = 0;
         int run = 0;
         for (int i = 0; i < message.length(); i++) {
@@ -271,7 +271,7 @@ public final class AutoModService {
                 best = run;
             }
         }
-        return (char) best;
+        return best;
     }
 
     private static int countNonAscii(String message) {
