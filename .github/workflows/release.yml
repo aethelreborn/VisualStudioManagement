@@ -8,9 +8,14 @@ on:
       tag:
         description: 'Tag to release (e.g. v1.0.0)'
         required: true
+        type: string
 
 permissions:
   contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   release:
@@ -30,10 +35,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Build and test
-        uses: gradle/actions/gradle-build-action@v4
-        with:
-          build-path: .
-          args: build
+        run: ./gradlew --no-daemon --stacktrace build
 
       - name: Resolve release tag
         id: tag

@@ -3,7 +3,6 @@ name: Build
 on:
   push:
     branches: [ main ]
-    tags: [ 'v*' ]
   pull_request:
     branches: [ main ]
   workflow_dispatch:
@@ -33,9 +32,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Build and test
-        uses: gradle/actions/gradle-build-action@v4
-        with:
-          build-path: .
+        run: ./gradlew --no-daemon --stacktrace build
 
       - name: Verify jar contents
         run: |
@@ -43,6 +40,7 @@ jobs:
           JAR=$(ls build/libs/VisualStudioManagement-*.jar | grep -v sources | head -1)
           echo "Artifact: $JAR"
           unzip -l "$JAR" | grep -E "paper-plugin.yml|VisualStudioManagement.class|VsmBootstrap.class|VsmLoader.class"
+          echo "--- paper-plugin.yml ---"
           unzip -p "$JAR" paper-plugin.yml
 
       - name: Upload artifact
