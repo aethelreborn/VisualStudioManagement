@@ -17,6 +17,10 @@ concurrency:
   group: release-${{ github.ref }}
   cancel-in-progress: false
 
+env:
+  PAPER_SHA256: bf1dcf627364f8a631ab15250d240eb5a8e89faaac523b391e1c61367fce9ff1
+  PAPER_URL: https://fill-data.papermc.io/v1/objects/bf1dcf627364f8a631ab15250d240eb5a8e89faaac523b391e1c61367fce9ff1/paper-26.2-133.jar
+
 jobs:
   release:
     name: Build, smoke-test on a real Paper server, publish release
@@ -50,11 +54,10 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p /tmp/paper && cd /tmp/paper
-          url="https://fill-data.papermc.io/v1/objects/bf1dcf627364f8a631ab15250d240eb5a8e89faaac523b391e1c61367fce9ff1/paper-26.2-133.jar"
-          curl -fsSL -o paper.jar "$url"
-          echo "bf1dcf627364f8a631ab15250d240eb5a8e89faaac523b391e1c61367fce9ff1  paper.jar" | sha256sum -c -
+          curl -fsSL -o paper.jar "$PAPER_URL"
+          echo "$PAPER_SHA256  paper.jar" | sha256sum -c -
 
-      - name: "Smoke test: boot Paper with the plugin and run commands"
+      - name: "Smoke test: boot Paper with the plugin and drive the commands"
         run: |
           set -euo pipefail
           cd /tmp/paper
@@ -62,57 +65,105 @@ jobs:
           mkdir -p plugins
           cp "$JAR" plugins/
           echo "eula=true" > eula.txt
-          cat > server.properties <<'PROPS'
-          online-mode=false
-          level-type=minecraft\:flat
-          level-name=world
-          spawn-protection=0
-          view-distance=4
-          simulation-distance=4
-          max-players=5
-          enable-command-block=false
-          enable-status=false
-          sync-chunk-writes=false
-          PROPS
+          printf '%s\n' \
+            'online-mode=false' \
+            'level-type=minecraft\:flat' \
+            'level-name=world' \
+            'spawn-protection=0' \
+            'view-distance=4' \
+            'simulation-distance=4' \
+            'max-players=5' \
+            'enable-command-block=false' \
+            'enable-status=false' \
+            'sync-chunk-writes=false' \
+            > server.properties
+
+          # The server prints "Done (" when it is ready; send the command script after that.
           mkfifo console_in
-          ( sleep 75; echo "vsm"; sleep 4; echo "vsm reload"; sleep 4; echo "stop"; ) > console_in &
+          (
+            sleep 70
+            echo "vsm"
+            sleep 3
+            echo "staff ranks"
+            sleep 3
+            echo "checkban Steve"
+            sleep 3
+            echo "history Steve"
+            sleep 3
+            echo "vsm audit verify"
+            sleep 3
+            echo "vsm debug"
+            sleep 3
+            echo "vsm reload"
+            sleep 3
+            echo "vsm about"
+            sleep 4
+            echo "stop"
+          ) > console_in &
+
           set +e
-          timeout 300 java -Xms512M -Xmx1G -XX:+UseG1GC -Dcom.mojang.eula.agree=true -jar paper.jar --nogui < console_in > server.log 2>&1
+          timeout 300 java -Xms512M -Xmx1G -XX:+UseG1GC -jar paper.jar --nogui < console_in > server.log 2>&1
           code=$?
           set -e
           echo "--- server exit code: $code"
-          echo "--- server log:"
-          cat server.log
           if [ $code -ne 0 ]; then
             echo "::error::Paper exited with code $code"
+            cat server.log
             exit 1
           fi
 
-      - name: "Smoke test: assert clean startup"
+      - name: "Smoke test: assert a clean, functional startup"
         run: |
           set -euo pipefail
           cd /tmp/paper
-          echo "=== plugin enable lines:"
-          grep -E "VisualStudioManagement|VSM" server.log | head -40 || true
+
+          echo "=== plugin lifecycle"
+          grep -E "VisualStudioManagement" server.log | head -20 || true
+
           failed=0
-          for pattern in "Could not load" "Error occurred while enabling" "Failed to load plugin" "Unable to load plugin" "Exception in thread \"main\"" "Could not enable plugin"; do
+          for pattern in "Could not load" "Error occurred while enabling" "Failed to load plugin" \
+                         "Unable to load plugin" "Exception in thread \"main\"" "Could not enable plugin" \
+                         "NoClassDefFoundError" "ClassNotFoundException"; do
             if grep -qF "$pattern" server.log; then
-              echo "::error::Found failure marker in server log: $pattern"
+              echo "::error::Failure marker in the server log: $pattern"
               grep -nF "$pattern" server.log | head -10
               failed=1
             fi
           done
-          if [ $failed -ne 0 ]; then
+          if grep -qE "^\[[0-9:]+ (ERROR|WARN)\]:.*Exception" server.log; then
+            echo "::error::An exception was logged"
+            grep -nE "^\[[0-9:]+ (ERROR|WARN)\]:.*Exception" server.log | head -10
+            failed=1
+          fi
+          [ $failed -eq 0 ] || exit 1
+
+          grep -q "Enabling VisualStudioManagement" server.log || {
+            echo "::error::The plugin was never enabled"; exit 1; }
+          grep -qE "Enabled in .* using SQLite storage" server.log || {
+            echo "::error::The plugin did not report a clean enable"; exit 1; }
+          grep -q "Done (" server.log || { echo "::error::Server never finished starting"; exit 1; }
+
+          echo "=== generated configuration"
+          DATA=plugins/VisualStudioManagement
+          for file in config.yml messages.yml ranks.yml templates.yml reasons.yml automod.yml permissions.yml; do
+            [ -s "$DATA/$file" ] || { echo "::error::$DATA/$file was not written"; exit 1; }
+          done
+          [ -s "$DATA/database.db" ] || { echo "::error::the SQLite database was not created"; exit 1; }
+          ls -la "$DATA"
+
+          echo "=== command output"
+          grep -E "Visual Studio Management v|Unknown command|wrong number of arguments|is not a valid" server.log \
+            | head -20 || true
+          if grep -qE "Unknown command|is not a valid" server.log; then
+            echo "::error::A registered command was rejected"
+            grep -nE "Unknown command|is not a valid" server.log | head -10
             exit 1
           fi
-          if ! grep -q "Done (" server.log; then
-            echo "::error::Server never reached 'Done' state"
-            exit 1
-          fi
-          if ! grep -q "Enabling VisualStudioManagement" server.log; then
-            echo "::error::Plugin was not enabled"
-            exit 1
-          fi
+          grep -q "Visual Studio Management v" server.log || {
+            echo "::error::The /vsm command produced no output"; exit 1; }
+          grep -q "audit chain verified" server.log || {
+            echo "::error::The audit chain verification produced no output"; exit 1; }
+
           echo "Smoke test passed."
 
       - name: Publish GitHub release
