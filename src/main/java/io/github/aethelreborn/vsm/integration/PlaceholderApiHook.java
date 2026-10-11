@@ -5,6 +5,7 @@ import io.github.aethelreborn.vsm.config.PermissionNodes;
 import java.util.Locale;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import java.util.UUID;
 import org.jetbrains.annotations.NotNull;
 
 /**
