@@ -152,19 +152,31 @@ jobs:
           ls -la "$DATA"
 
           echo "=== command output"
-          grep -E "Visual Studio Management v|Unknown command|wrong number of arguments|is not a valid" server.log \
+          grep -iE "Visual Studio Management [0-9]|Unknown command|wrong number of arguments|is not a valid|Audit chain" server.log \
             | head -20 || true
           if grep -qE "Unknown command|is not a valid" server.log; then
             echo "::error::A registered command was rejected"
             grep -nE "Unknown command|is not a valid" server.log | head -10
             exit 1
           fi
-          grep -q "Visual Studio Management v" server.log || {
+          # The root command renders the "about" message: "Visual Studio Management <version> | ...".
+          grep -qE "Visual Studio Management [0-9]+\.[0-9]+" server.log || {
             echo "::error::The /vsm command produced no output"; exit 1; }
-          grep -q "audit chain verified" server.log || {
+          grep -qiE "Audit chain verified" server.log || {
             echo "::error::The audit chain verification produced no output"; exit 1; }
 
           echo "Smoke test passed."
+
+      - name: Upload smoke test logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-test-logs
+          path: |
+            /tmp/paper/server.log
+            /tmp/paper/plugins/VisualStudioManagement/*.yml
+          if-no-files-found: warn
+          retention-days: 14
 
       - name: Publish GitHub release
         env:
