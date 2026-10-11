@@ -462,8 +462,9 @@ public final class StaffModeService {
                 return null;
             }
         }
+    }
 
- /** Applies the persistent data key used to mark tool items. */
+    /** Applies the persistent data key used to mark tool items. */
     static final class ItemMetaWithKey {
         private ItemMetaWithKey() {
         }

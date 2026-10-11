@@ -381,7 +381,7 @@ public final class MovementCommands {
                                     }
                                     return setGameMode(plugin, context, target, target,
                                             StringArgumentType.getString(context, "mode"));
-                                }));
+                                })));
         return node;
     }
 

@@ -143,7 +143,7 @@ public final class StaffCommands {
                         .then(Commands.literal("remove").then(Commands.argument("player", StringArgumentType.word())
                                 .suggests(Cmd.suggestions(() -> staffNames(plugin)))
                                 .executes(context -> removePin(plugin, context,
-                                        StringArgumentType.getString(context, "player")))))));
+                                        StringArgumentType.getString(context, "player"))))));
     }
 
     /** Shared {@code <player> <rank>} shape. */
