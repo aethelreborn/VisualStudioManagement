@@ -1,6 +1,7 @@
 package io.github.aethelreborn.vsm.command;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.github.aethelreborn.vsm.VisualStudioManagement;
 import io.github.aethelreborn.vsm.config.PermissionNodes;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
