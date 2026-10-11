@@ -45,30 +45,30 @@ public final class PunishCommands {
         }
         return switch (literal.toLowerCase(java.util.Locale.ROOT)) {
             case "warn" -> warn(plugin);
-            case "tempwarn" -> tempwarn(plugin);
+            case "tempwarn" -> tempWarn(plugin);
             case "unwarn" -> unwarn(plugin);
             case "warnings" -> warnings(plugin);
             case "mute" -> mute(plugin);
-            case "tempmute" -> tempmute(plugin);
-            case "shadowmute" -> shadowmute(plugin);
-            case "ipmute" -> ipmute(plugin);
+            case "tempmute" -> tempMute(plugin);
+            case "shadowmute" -> shadowMute(plugin);
+            case "ipmute" -> ipMute(plugin);
             case "unmute" -> unmute(plugin);
             case "kick" -> kick(plugin);
-            case "kickall" -> kickall(plugin);
-            case "tempban" -> tempban(plugin);
+            case "kickall" -> kickAll(plugin);
+            case "tempban" -> tempBan(plugin);
             case "ban" -> ban(plugin);
             case "unban" -> unban(plugin);
-            case "ipban" -> ipban(plugin);
-            case "tempipban" -> tempipban(plugin);
-            case "ipunban" -> ipunban(plugin);
-            case "nameban" -> nameban(plugin);
+            case "ipban" -> ipBan(plugin);
+            case "tempipban" -> tempIpBan(plugin);
+            case "ipunban" -> ipUnban(plugin);
+            case "nameban" -> nameBan(plugin);
             case "punish" -> punish(plugin);
             case "pardon" -> pardon(plugin);
             case "punishment" -> punishment(plugin);
-            case "checkban" -> checkban(plugin);
-            case "checkmute" -> checkmute(plugin);
-            case "banlist" -> banlist(plugin);
-            case "mutelist" -> mutelist(plugin);
+            case "checkban" -> checkBan(plugin);
+            case "checkmute" -> checkMute(plugin);
+            case "banlist" -> banList(plugin);
+            case "mutelist" -> muteList(plugin);
             default -> null;
         };
     }

@@ -2,6 +2,7 @@ package io.github.aethelreborn.vsm.services;
 
 import io.github.aethelreborn.vsm.config.VsmConfig;
 import io.github.aethelreborn.vsm.models.Punishment;
+import io.github.aethelreborn.vsm.models.PunishmentType;
 import io.github.aethelreborn.vsm.util.Json;
 import io.github.aethelreborn.vsm.util.TextUtil;
 import io.github.aethelreborn.vsm.util.TimeParser;

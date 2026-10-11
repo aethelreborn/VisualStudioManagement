@@ -557,7 +557,7 @@ public final class VsmConfig {
     }
 
     public Set<String> twoPersonActions() {
-        return upper(config.getStringList("security.two-person-rule.actions"));
+        return new java.util.LinkedHashSet<>(upper(config.getStringList("security.two-person-rule.actions")));
     }
 
     /** @return {@code max} actions allowed per window, or {@code -1} when unlimited. */
@@ -620,7 +620,7 @@ public final class VsmConfig {
     }
 
     public Set<String> discordEvents() {
-        return upper(config.getStringList("webhooks.discord.events"));
+        return new java.util.LinkedHashSet<>(upper(config.getStringList("webhooks.discord.events")));
     }
 
     public String discordMentionRoleId() {

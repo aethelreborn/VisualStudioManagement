@@ -2,6 +2,7 @@ package io.github.aethelreborn.vsm.gui;
 
 import io.github.aethelreborn.vsm.VisualStudioManagement;
 import io.github.aethelreborn.vsm.config.PermissionNodes;
+import io.github.aethelreborn.vsm.config.PermissionNodes;
 import io.github.aethelreborn.vsm.gui.framework.Menu;
 import io.github.aethelreborn.vsm.models.PunishmentType;
 import io.github.aethelreborn.vsm.services.ActionRequest;

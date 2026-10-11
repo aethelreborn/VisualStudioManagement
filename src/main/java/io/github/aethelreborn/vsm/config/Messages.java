@@ -106,7 +106,7 @@ public final class Messages {
             resolvers.add(Placeholder.unparsed(entry.getKey(), value));
         }
         TagResolver[] array = resolvers.toArray(new TagResolver[0]);
-        String prepared = legacyColorCodes ? LegacyComponentSerializer.legacyAmpersand().serialize(text) : text;
+        String prepared = legacyColorCodes ? LegacyComponentSerializer.legacyAmpersand().deserialize(text) : text;
         try {
             return MiniMessage.miniMessage().deserialize(prepared, array);
         } catch (RuntimeException ex) {

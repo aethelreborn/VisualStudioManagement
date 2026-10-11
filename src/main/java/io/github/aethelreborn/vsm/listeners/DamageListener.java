@@ -53,7 +53,7 @@ public final class DamageListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onTarget(EntityTargetEvent event) {
-        if (plugin.vanishService().isVanished(event.getTarget())) {
+        if (event.getTarget() instanceof Player hidden && plugin.vanishService().isVanished(hidden)) {
             event.setCancelled(true);
         }
     }

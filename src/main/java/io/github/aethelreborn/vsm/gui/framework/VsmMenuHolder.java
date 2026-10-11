@@ -67,15 +67,4 @@ public final class VsmMenuHolder implements InventoryHolder {
         item.click(new Menu.ClickContext(viewer, menu, slot, clickType, item));
     }
 
-    /** Renders a lore list safely: user text is never treated as formatting. */
-    public static List<net.kyori.adventure.text.Component> safeLore(List<String> lore) {
-        return lore.stream()
-                .map(line -> (net.kyori.adventure.text.Component)
-                        net.kyori.adventure.text.Component.text(line))
-                .toList();
-    }
-
-    public static ItemStack filler(Material material) {
-        return new ItemStack(material);
-    }
 }

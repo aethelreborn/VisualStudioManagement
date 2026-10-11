@@ -119,7 +119,7 @@ public final class CommandRegistrar {
             if (node == null) {
                 continue;
             }
-            registrar.register(node.build(), null);
+            registrar.register(node.build(), (String) null);
         }
     }
 

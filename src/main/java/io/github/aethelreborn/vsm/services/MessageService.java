@@ -169,9 +169,9 @@ public final class MessageService {
 
     /** Staff chat; never visible to normal players (spec 11.1). */
     public void staffChat(CommandSender sender, String message) {
-        Component component = messages.get("staffchat-format",
+        Component component = messages.get("staffchat-format", Messages.placeholders(
                 "staff", safe(sender.getName()),
-                "message", TextUtil.sanitiseForWebhook(message));
+                "message", TextUtil.sanitiseForWebhook(message)));
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (permissions.has(player.getUniqueId(), PermissionNodes.STAFF_CHAT)) {
                 player.sendMessage(component);
@@ -182,9 +182,9 @@ public final class MessageService {
 
     /** Admin chat, admin only (spec 8.6). */
     public void adminChat(CommandSender sender, String message) {
-        Component component = messages.get("adminchat-format",
+        Component component = messages.get("adminchat-format", Messages.placeholders(
                 "staff", safe(sender.getName()),
-                "message", TextUtil.sanitiseForWebhook(message));
+                "message", TextUtil.sanitiseForWebhook(message)));
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (permissions.has(player.getUniqueId(), PermissionNodes.ADMIN_CHAT)) {
                 player.sendMessage(component);

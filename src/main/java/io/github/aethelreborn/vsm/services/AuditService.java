@@ -46,7 +46,7 @@ public final class AuditService {
     private final Deque<AuditEntry> chainMemory = new ArrayDeque<>();
     private volatile boolean tamperEvident;
     private volatile boolean consoleMajorActions;
-    private volatile long lastHash = "";
+    private volatile String lastHash = "";
 
     public AuditService(Logger logger, StorageProvider storage, VsmConfig config, Path logDirectory) {
         this.logger = logger;
@@ -139,14 +139,10 @@ public final class AuditService {
             }
             Path file = logDirectory.resolve("audit-" + day + ".log");
             boolean exists = Files.exists(file);
-            try (OutputStream out = new java.io.BufferedOutputStream(
-                    new java.io.FileOutputStream(file.toFile(), true), StandardCharsets.UTF_8)) {
-                if (!exists) {
-                    out.write(("--- Visual Studio Management audit log for " + day + " ---"
-                            + System.lineSeparator()).getBytes(StandardCharsets.UTF_8));
-                }
-                out.write(builder.toString().getBytes(StandardCharsets.UTF_8));
-            }
+            String header = exists ? "" : "--- Visual Studio Management audit log for " + day + " ---"
+                    + System.lineSeparator();
+            Files.writeString(file, header + builder, StandardCharsets.UTF_8,
+                    java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
         } catch (IOException ex) {
             logger.warning("Could not write the audit log file: " + ex.getMessage());
         }

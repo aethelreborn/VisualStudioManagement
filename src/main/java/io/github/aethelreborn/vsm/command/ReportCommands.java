@@ -34,7 +34,7 @@ public final class ReportCommands {
         return switch (literal.toLowerCase(java.util.Locale.ROOT)) {
             case "report" -> report(plugin);
             case "reports" -> reports(plugin);
-            case "helpop" -> helpop(plugin);
+            case "helpop" -> helpOp(plugin);
             default -> null;
         };
     }

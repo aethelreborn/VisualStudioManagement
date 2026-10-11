@@ -130,7 +130,7 @@ public final class StaffModeService {
         inventory.setItem(SLOT_VANISH, tool(Material.ENDER_EYE, "staffmode-tool-vanish", "Toggle vanish"));
         inventory.setItem(SLOT_INVSEE, tool(Material.CHEST, "staffmode-tool-invsee", "Inspect inventory"));
         inventory.setItem(SLOT_PUNISH, tool(Material.PAPER, "staffmode-tool-punish", "Open the punish menu"));
-        inventory.setItem(SLOT_GAMEMODE, tool(Material.DYE, "staffmode-tool-gamemode", "Toggle game mode"));
+        inventory.setItem(SLOT_GAMEMODE, tool(Material.RED_DYE, "staffmode-tool-gamemode", "Toggle game mode"));
         inventory.setItem(SLOT_EXIT, tool(Material.BARRIER, "staffmode-tool-exit", "Leave staff mode"));
     }
 

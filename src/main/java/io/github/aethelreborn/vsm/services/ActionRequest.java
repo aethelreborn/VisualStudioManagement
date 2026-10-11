@@ -82,7 +82,7 @@ public final class ActionRequest {
         return this;
     }
 
-    public ActionRequest consoleActor() {
+    public ActionRequest console() {
         this.actorUuid = null;
         this.actorName = "console";
         this.consoleActor = true;
@@ -127,6 +127,12 @@ public final class ActionRequest {
 
     public ActionRequest permanent() {
         this.permanent = true;
+        return this;
+    }
+
+    /** @param value {@code true} requests a permanent punishment, {@code false} leaves it timed. */
+    public ActionRequest permanent(boolean value) {
+        this.permanent = value;
         return this;
     }
 

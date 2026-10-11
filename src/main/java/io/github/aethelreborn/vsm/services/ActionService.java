@@ -420,7 +420,9 @@ public final class ActionService {
         }
 
         Bukkit.getPluginManager().callEvent(new StaffRankChangeEvent(request.targetUuid(), previousRank, rankId, actorUuid));
-        staffService().setRank(request.targetUuid(), rankId, actorUuid, actorName);
+        if (staffService != null) {
+            staffService.setRank(request.targetUuid(), rankId, actorUuid, actorName);
+        }
         audit.log(request.source(), actorUuid, actorName, "STAFF_RANK_CHANGE",
                 request.targetUuid(), request.targetName(), previousRank + " -> " + rankId);
         if (webhooks != null) {

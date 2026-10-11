@@ -42,9 +42,13 @@ public final class PermissionService {
             return;
         }
         registered = true;
-        Map<String, List<String>> children = new LinkedHashMap<>();
+        Map<String, Map<String, Boolean>> children = new LinkedHashMap<>();
         for (Map.Entry<String, Set<String>> entry : PermissionNodes.hierarchy().entrySet()) {
-            children.put(entry.getKey(), new ArrayList<>(entry.getValue()));
+            Map<String, Boolean> map = new LinkedHashMap<>();
+            for (String child : entry.getValue()) {
+                map.put(child, Boolean.TRUE);
+            }
+            children.put(entry.getKey(), map);
         }
         for (Map.Entry<String, String> entry : PermissionNodes.all().entrySet()) {
             String node = entry.getKey();

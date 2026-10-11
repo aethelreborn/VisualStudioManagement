@@ -185,6 +185,11 @@ public final class Punishment {
         return removedAt;
     }
 
+    public Punishment removedAt(long removedAt) {
+        this.removedAt = removedAt;
+        return this;
+    }
+
     public String removalReason() {
         return removalReason;
     }

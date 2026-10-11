@@ -29,7 +29,11 @@ public class Menu implements InventoryHolder {
     protected final Map<Integer, MenuItem> items = new HashMap<>();
     private Inventory inventory;
     private String title = "Menu";
-    private int size = 27;
+    protected int size = 27;
+
+    protected int size() {
+        return size;
+    }
 
     public Menu(VisualStudioManagement plugin, String title, int size) {
         this.plugin = plugin;

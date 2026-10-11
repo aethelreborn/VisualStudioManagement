@@ -38,18 +38,18 @@ public final class MovementCommands {
         }
         return switch (literal.toLowerCase(java.util.Locale.ROOT)) {
             case "tp" -> tp(plugin);
-            case "tphere" -> tphere(plugin);
-            case "tpall" -> tpall(plugin);
-            case "tppos" -> tppos(plugin);
+            case "tphere" -> tpHere(plugin);
+            case "tpall" -> tpAll(plugin);
+            case "tppos" -> tpPos(plugin);
             case "back" -> back(plugin);
             case "top" -> top(plugin);
-            case "tpoffline" -> tpoffline(plugin);
+            case "tpoffline" -> tpOffline(plugin);
             case "fly" -> fly(plugin);
             case "speed" -> speed(plugin);
             case "gm" -> gm(plugin);
             case "spectate" -> spectate(plugin);
             case "follow" -> follow(plugin);
-            case "staffmode" -> staffmode(plugin);
+            case "staffmode" -> staffMode(plugin);
             default -> null;
         };
     }

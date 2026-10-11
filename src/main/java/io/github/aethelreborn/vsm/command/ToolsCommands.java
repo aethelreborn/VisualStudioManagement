@@ -36,17 +36,17 @@ public final class ToolsCommands {
             case "vanish" -> vanish(plugin);
             case "invsee" -> invsee(plugin);
             case "endersee" -> endersee(plugin);
-            case "commandspy" -> commandspy(plugin);
-            case "socialspy" -> socialspy(plugin);
+            case "commandspy" -> commandSpy(plugin);
+            case "socialspy" -> socialSpy(plugin);
             case "watch" -> watch(plugin);
-            case "clearchat" -> clearchat(plugin);
-            case "mutechat" -> mutechat(plugin);
+            case "clearchat" -> clearChat(plugin);
+            case "mutechat" -> muteChat(plugin);
             case "slowmode" -> slowmode(plugin);
             case "lockdown" -> lockdown(plugin);
             case "maintenance" -> maintenance(plugin);
             case "near" -> near(plugin);
             case "alerts" -> alerts(plugin);
-            case "staffauth" -> staffauth(plugin);
+            case "staffauth" -> staffAuth(plugin);
             default -> null;
         };
     }

@@ -183,7 +183,7 @@ public final class TeleportService {
             Location previous = deque.poll();
             return teleportRaw(player, previous, "back");
         }
-        SavedLocation saved = storage.location(player.getUniqueId(), SavedLocation.KIND_BACK).join();
+        SavedLocation saved = storage.location(player.getUniqueId(), SavedLocation.KIND_BACK).join().orElse(null);
         if (saved == null) {
             messages.send(player, "back-no-location");
             return false;
@@ -275,7 +275,7 @@ public final class TeleportService {
 
     /** Teleport to an offline player's last logout location ({@code /tpoffline}). */
     public boolean toOffline(Player actor, UUID targetUuid, String targetName) {
-        SavedLocation saved = storage.location(targetUuid, SavedLocation.KIND_LOGOUT).join();
+        SavedLocation saved = storage.location(targetUuid, SavedLocation.KIND_LOGOUT).join().orElse(null);
         if (saved == null) {
             messages.send(actor, "tpoffline-no-location", "target", targetName);
             return false;

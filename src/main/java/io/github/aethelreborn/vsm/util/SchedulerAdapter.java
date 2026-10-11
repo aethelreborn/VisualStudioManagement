@@ -66,8 +66,19 @@ public final class SchedulerAdapter {
     }
 
     /** Runs {@code asyncWork} off thread then {@code then} on the main thread. */
-    public <T> CompletableFuture<T> supplyAsync(CompletableFuture<T> asyncWork, Consumer<T> then) {
-        return asyncWork.thenAccept(value -> sync(() -> then.accept(value)));
+    public <T> CompletableFuture<Void> supplyAsync(CompletableFuture<T> asyncWork, Consumer<T> then) {
+        CompletableFuture<Void> done = new CompletableFuture<>();
+        asyncWork.whenComplete((value, throwable) -> {
+            if (throwable != null) {
+                done.completeExceptionally(throwable);
+                return;
+            }
+            sync(() -> {
+                then.accept(value);
+                done.complete(null);
+            });
+        });
+        return done;
     }
 
     public Plugin plugin() {

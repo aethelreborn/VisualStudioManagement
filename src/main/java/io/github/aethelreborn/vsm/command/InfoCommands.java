@@ -37,14 +37,14 @@ public final class InfoCommands {
         }
         return switch (literal.toLowerCase(java.util.Locale.ROOT)) {
             case "history" -> history(plugin);
-            case "staffhistory" -> staffhistory(plugin);
-            case "mutes" -> mutes(plugin);
-            case "bans" -> bans(plugin);
-            case "warns" -> warns(plugin);
+            case "staffhistory" -> staffHistory(plugin);
+            case "mutes" -> typeHistory(plugin, "mutes", "mute");
+            case "bans" -> typeHistory(plugin, "bans", "ban");
+            case "warns" -> typeHistory(plugin, "warns", "warn");
             case "note" -> note(plugin);
             case "alts" -> alts(plugin);
-            case "iphistory" -> iphistory(plugin);
-            case "namehistory" -> namehistory(plugin);
+            case "iphistory" -> ipHistory(plugin);
+            case "namehistory" -> nameHistory(plugin);
             case "lookup" -> lookup(plugin);
             case "seen" -> seen(plugin);
             default -> null;

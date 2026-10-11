@@ -43,6 +43,21 @@ public final class Json {
         return this;
     }
 
+    public Json put(String key, double value) {
+        comma();
+        builder.append(quote(key)).append(':').append(value);
+        needsComma = true;
+        return this;
+    }
+
+    public Json put(String key, float value) {
+        return put(key, (double) value);
+    }
+
+    public Json put(String key, int value) {
+        return put(key, (long) value);
+    }
+
     public Json put(String key, long value) {
         comma();
         builder.append(quote(key)).append(':').append(value);

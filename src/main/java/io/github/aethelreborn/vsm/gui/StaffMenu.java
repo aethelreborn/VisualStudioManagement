@@ -1,6 +1,7 @@
 package io.github.aethelreborn.vsm.gui;
 
 import io.github.aethelreborn.vsm.VisualStudioManagement;
+import io.github.aethelreborn.vsm.config.PermissionNodes;
 import io.github.aethelreborn.vsm.gui.framework.Menu;
 import java.util.List;
 import org.bukkit.Material;

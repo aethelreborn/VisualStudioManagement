@@ -267,10 +267,10 @@ public final class VisualStudioManagement extends JavaPlugin {
             TemplateRegistry previousTemplates = templateRegistry;
 
             loadConfiguration();
-            rankRegistry.ranks(staffCache);
+            staffCache.ranks(rankRegistry);
             if (!ranksCompatible(previousRanks)) {
                 rankRegistry = previousRanks;
-                rankRegistry.ranks(staffCache);
+                staffCache.ranks(rankRegistry);
             }
             if (templateRegistry.hasProblems()) {
                 getLogger().warning("templates.yml has problems after reload; keeping the previous templates.");
@@ -282,8 +282,8 @@ public final class VisualStudioManagement extends JavaPlugin {
             if (messages == null) {
                 messages = previousMessages;
             }
-            permissionService.ranks(rankRegistry);
             actionService.ranks(rankRegistry);
+            staffCache.ranks(rankRegistry);
             auditService.applyConfig();
             staffCache.ranks(rankRegistry);
             staffService.loadCache();

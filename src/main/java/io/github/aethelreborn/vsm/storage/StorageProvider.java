@@ -79,7 +79,7 @@ public interface StorageProvider {
 
     CompletableFuture<Report> createReport(Report report);
 
-    CompletableFuture<void> saveReport(Report report);
+    CompletableFuture<Void> saveReport(Report report);
 
     CompletableFuture<Optional<Report>> reportById(long id);
 
