@@ -99,8 +99,7 @@ public final class CommandRegistrar {
         boolean aliases = config.standaloneAliases();
         String root = rootLiteral.toLowerCase(Locale.ROOT);
         LiteralArgumentBuilder<CommandSourceStack> rootNode = Commands.literal(root)
-                .requires(stack -> stack.getSender().hasPermission(PermissionNodes.USE)
-                        || stack.getSender().hasPermission(PermissionNodes.ALL))
+                .requires(Cmd.requires(plugin, PermissionNodes.USE))
                 .executes(context -> {
                     plugin.messageService().send(context.getSource().getSender(), "about",
                             "version", plugin.getPluginMeta().getVersion(),
@@ -118,31 +117,31 @@ public final class CommandRegistrar {
             }
         }
         LiteralCommandNode<CommandSourceStack> built = rootNode.build();
-        plugin.getLogger().info("[VSM] cmd root=" + root + " literals=" + literals(plugin)
-                + " children=" + built.getChildren().size() + " rootHasCommand=" + (built.getCommand() != null));
         try {
             java.util.Set<String> labels = registrar.register(built, "Visual Studio Management");
-            plugin.getLogger().info("[VSM] cmd registered labels=" + labels);
+            plugin.getLogger().info("Registered " + labels.size() + " command labels under /" + root
+                    + " (" + built.getChildren().size() + " sub-commands)");
         } catch (Throwable t) {
-            plugin.getLogger().log(java.util.logging.Level.SEVERE, "[VSM] root registration failed", t);
+            plugin.getLogger().log(java.util.logging.Level.SEVERE, "Command registration failed", t);
             throw t;
         }
 
         if (!aliases) {
             return;
         }
+        int aliasCount = 0;
         for (String alias : literals(plugin)) {
             LiteralArgumentBuilder<CommandSourceStack> node = build(alias, plugin);
             if (node == null) {
                 continue;
             }
             try {
-                java.util.Set<String> labels = registrar.register(node.build(), (String) null);
-                plugin.getLogger().info("[VSM] alias " + alias + " registered labels=" + labels);
+                aliasCount += registrar.register(node.build(), (String) null).size();
             } catch (Throwable t) {
-                plugin.getLogger().log(java.util.logging.Level.SEVERE, "[VSM] alias " + alias + " registration failed", t);
+                plugin.getLogger().log(java.util.logging.Level.SEVERE, "Alias " + alias + " registration failed", t);
                 throw t;
             }
         }
+        plugin.getLogger().info("Registered " + aliasCount + " standalone command aliases");
     }
 }
