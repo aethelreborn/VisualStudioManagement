@@ -41,14 +41,6 @@ public final class StaffCommands {
                 parent.then(node);
             }
         }
-        parent.then(remove(plugin));
-        parent.then(setRank(plugin));
-        parent.then(promote(plugin));
-        parent.then(demote(plugin));
-        parent.then(list(plugin));
-        parent.then(info(plugin));
-        parent.then(ranks(plugin));
-        parent.then(pin(plugin));
     }
 
     private static LiteralArgumentBuilder<CommandSourceStack> open(VisualStudioManagement plugin) {
