@@ -81,8 +81,8 @@ jobs:
           code=$?
           set -e
           echo "--- server exit code: $code"
-          echo "--- log tail:"
-          tail -n 80 server.log
+          echo "--- server log:"
+          cat server.log
           if [ $code -ne 0 ]; then
             echo "::error::Paper exited with code $code"
             exit 1

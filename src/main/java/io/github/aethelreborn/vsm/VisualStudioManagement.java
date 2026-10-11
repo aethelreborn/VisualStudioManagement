@@ -440,7 +440,12 @@ public final class VisualStudioManagement extends JavaPlugin {
     }
 
     private void hookIntegrations() {
-        PlaceholderApiHook.register(this);
+        // Integrations are optional: a failure here must never stop the plugin from working.
+        try {
+            PlaceholderApiHook.register(this);
+        } catch (Throwable throwable) {
+            getLogger().warning("PlaceholderAPI hook skipped: " + throwable);
+        }
     }
 
     // ----------------------------------------------------------- accessors
