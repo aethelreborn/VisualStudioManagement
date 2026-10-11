@@ -116,7 +116,16 @@ public final class CommandRegistrar {
                 rootNode.then(node);
             }
         }
-        registrar.register(rootNode.build(), "Visual Studio Management");
+        LiteralCommandNode<CommandSourceStack> built = rootNode.build();
+        plugin.getLogger().info("[VSM] cmd root=" + root + " literals=" + literals(plugin)
+                + " children=" + built.getChildren().size() + " rootHasCommand=" + (built.getCommand() != null));
+        try {
+            java.util.Set<String> labels = registrar.register(built, "Visual Studio Management");
+            plugin.getLogger().info("[VSM] cmd registered labels=" + labels);
+        } catch (Throwable t) {
+            plugin.getLogger().log(java.util.logging.Level.SEVERE, "[VSM] root registration failed", t);
+            throw t;
+        }
 
         if (!aliases) {
             return;
@@ -126,7 +135,13 @@ public final class CommandRegistrar {
             if (node == null) {
                 continue;
             }
-            registrar.register(node.build(), (String) null);
+            try {
+                java.util.Set<String> labels = registrar.register(node.build(), (String) null);
+                plugin.getLogger().info("[VSM] alias " + alias + " registered labels=" + labels);
+            } catch (Throwable t) {
+                plugin.getLogger().log(java.util.logging.Level.SEVERE, "[VSM] alias " + alias + " registration failed", t);
+                throw t;
+            }
         }
     }
 }

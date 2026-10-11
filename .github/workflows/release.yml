@@ -84,11 +84,13 @@ jobs:
             sleep 70
             echo "vsm"
             sleep 3
-            echo "staff ranks"
+            echo "vsm staff ranks"
             sleep 3
-            echo "checkban Steve"
+            echo "vsm checkban Steve"
             sleep 3
-            echo "history Steve"
+            echo "vsm history Steve"
+            sleep 3
+            echo "vsm audit"
             sleep 3
             echo "vsm audit verify"
             sleep 3
