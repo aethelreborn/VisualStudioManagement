@@ -10,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -169,39 +170,120 @@ public final class StaffModeService {
         if (!config.staffModeSaveToDisk()) {
             return;
         }
+        // The inventory is captured on the main thread; only the file writes happen off thread.
+        List<ItemStack> snapshot = new ArrayList<>();
+        PlayerInventory inventory = player.getInventory();
+        for (int slot = SLOT_EXIT; slot < inventory.getSize(); slot++) {
+            snapshot.add(inventory.getItem(slot));
+        }
+        ItemStack offHand = inventory.getItemInOffHand();
+        Location location = player.getLocation();
+        String world = location.getWorld() == null ? "" : location.getWorld().getName();
+        double x = location.getX();
+        double y = location.getY();
+        double z = location.getZ();
+        float yaw = location.getYaw();
+        float pitch = location.getPitch();
+        String gamemode = player.getGameMode().name();
+        boolean allowFlight = player.getAllowFlight();
+        boolean flying = player.isFlying();
+        int level = player.getLevel();
+        float exp = player.getExp();
+        AttributeInstance health = player.getAttribute(Attribute.MAX_HEALTH);
+        double maxHealth = health == null ? 20.0D : health.getValue();
+        int food = player.getFoodLevel();
+        float saturation = player.getSaturation();
+
         scheduler.async(() -> {
             try {
                 Files.createDirectories(stateDirectory);
-                Location location = player.getLocation();
-                StringBuilder items = new StringBuilder();
-                PlayerInventory inventory = player.getInventory();
-                for (int slot = 0; slot < inventory.getSize(); slot++) {
-                    if (slot < SLOT_EXIT) {
-                        continue; // staff-mode tools are regenerated
-                    }
-                    items.append(Json.quote(inventory.getItem(slot) == null
-                            ? "" : serializeItem(inventory.getItem(slot))).append(',');
-                }
-                AttributeInstance health = player.getAttribute(Attribute.MAX_HEALTH);
                 String json = Json.object()
-                        .put("world", location.getWorld() == null ? "" : location.getWorld().getName())
-                        .put("x", location.getX()).put("y", location.getY()).put("z", location.getZ())
-                        .put("yaw", location.getYaw()).put("pitch", location.getPitch())
-                        .put("gamemode", player.getGameMode().name())
-                        .put("allowFlight", player.getAllowFlight())
-                        .put("flying", player.isFlying())
-                        .put("level", player.getLevel())
-                        .put("exp", player.getExp())
-                        .put("health", health == null ? 20.0D : health.getValue())
-                        .put("food", player.getFoodLevel())
-                        .put("saturation", player.getSaturation())
-                        .put("inventory", items.toString())
+                        .put("world", world)
+                        .put("x", x).put("y", y).put("z", z)
+                        .put("yaw", yaw).put("pitch", pitch)
+                        .put("gamemode", gamemode)
+                        .put("allowFlight", allowFlight)
+                        .put("flying", flying)
+                        .put("level", level)
+                        .put("exp", exp)
+                        .put("health", maxHealth)
+                        .put("food", food)
+                        .put("saturation", saturation)
                         .toString();
                 Files.writeString(stateFile(player.getUniqueId()), json, StandardCharsets.UTF_8);
+                writeItems(player.getUniqueId(), snapshot, offHand);
             } catch (IOException ex) {
                 logger.warning("Could not save staff-mode state: " + ex.getMessage());
             }
         });
+    }
+
+    /** One file per slot keeps the saved inventory readable and free of escaping problems. */
+    private void writeItems(UUID uuid, List<ItemStack> snapshot, ItemStack offHand) throws IOException {
+        Path directory = stateDirectory.resolve("items-" + uuid);
+        if (Files.exists(directory)) {
+            try (var stream = Files.list(directory)) {
+                for (Path path : stream.toList()) {
+                    Files.deleteIfExists(path);
+                }
+            }
+        }
+        Files.createDirectories(directory);
+        for (int slot = 0; slot < snapshot.size(); slot++) {
+            ItemStack item = snapshot.get(slot);
+            if (item == null || item.getType().isAir()) {
+                continue;
+            }
+            Files.writeString(directory.resolve(slot + ".yml"), serializeItem(item), StandardCharsets.UTF_8);
+        }
+        if (offHand != null && !offHand.getType().isAir()) {
+            Files.writeString(directory.resolve("offhand.yml"), serializeItem(offHand), StandardCharsets.UTF_8);
+        }
+    }
+
+    private List<ItemStack> readItems(UUID uuid, int expectedSize) {
+        List<ItemStack> items = new ArrayList<>(Collections.nCopies(Math.max(0, expectedSize), null));
+        Path directory = stateDirectory.resolve("items-" + uuid);
+        if (!Files.isDirectory(directory)) {
+            return items;
+        }
+        try (var stream = Files.list(directory)) {
+            for (Path path : stream.toList()) {
+                String name = path.getFileName().toString();
+                ItemStack item = SerializationHelper.deserializeItem(Files.readString(path, StandardCharsets.UTF_8));
+                if (item == null) {
+                    continue;
+                }
+                if (name.equals("offhand.yml")) {
+                    continue;
+                }
+                try {
+                    int slot = Integer.parseInt(name.substring(0, name.length() - 4));
+                    if (slot >= 0 && slot < items.size()) {
+                        items.set(slot, item);
+                    }
+                } catch (NumberFormatException ignored) {
+                    // Not one of our files.
+                }
+            }
+        } catch (IOException ex) {
+            logger.fine("Could not read the saved staff-mode inventory: " + ex.getMessage());
+        }
+        return items;
+    }
+
+    private void deleteItems(UUID uuid) {
+        Path directory = stateDirectory.resolve("items-" + uuid);
+        if (!Files.isDirectory(directory)) {
+            return;
+        }
+        try (var stream = Files.list(directory)) {
+            for (Path path : stream.toList()) {
+                Files.deleteIfExists(path);
+            }
+        } catch (IOException ex) {
+            logger.fine("Could not delete the saved staff-mode inventory: " + ex.getMessage());
+        }
     }
 
     private void loadState(Player player) {
@@ -238,24 +320,21 @@ public final class StaffModeService {
             player.setFoodLevel(state.food);
             player.setSaturation(state.saturation);
             player.setInvulnerable(false);
-            restoreInventory(player, state.inventory);
+            restoreInventory(player, player.getUniqueId());
         } catch (IOException ex) {
             logger.warning("Could not restore staff-mode state: " + ex.getMessage());
         }
     }
 
-    private void restoreInventory(Player player, String rawInventory) {
+    private void restoreInventory(Player player, UUID uuid) {
         PlayerInventory inventory = player.getInventory();
-        List<ItemStack> saved = SerializationHelper.deserializeAll(rawInventory);
+        List<ItemStack> saved = readItems(uuid, inventory.getSize() - SLOT_EXIT);
         inventory.clear();
-        int index = 0;
-        for (int slot = 0; slot < inventory.getSize(); slot++) {
-            if (slot < SLOT_EXIT) {
-                continue;
-            }
+        for (int slot = SLOT_EXIT; slot < inventory.getSize(); slot++) {
+            int index = slot - SLOT_EXIT;
             inventory.setItem(slot, index < saved.size() ? saved.get(index) : null);
-            index++;
         }
+        deleteItems(uuid);
     }
 
     /** Restores anybody left in staff mode after a crash (spec 11.5, acceptance test). */
@@ -297,7 +376,6 @@ public final class StaffModeService {
         public double health = 20;
         public int food = 20;
         public float saturation = 5;
-        public String inventory = "[]";
 
         static JsonState parse(String json) {
             JsonState state = new JsonState();
@@ -315,19 +393,9 @@ public final class StaffModeService {
             state.health = number(json, "health", 20);
             state.food = (int) number(json, "food", 20);
             state.saturation = (float) number(json, "saturation", 5);
-            state.inventory = rawArray(json, "inventory");
             return state;
         }
 
-        private static String rawArray(String json, String key) {
-            int start = json.indexOf("\"" + key + "\":");
-            if (start < 0) {
-                return "[]";
-            }
-            int open = json.indexOf('[', start);
-            int close = json.indexOf(']', open);
-            return open < 0 || close < 0 ? "[]" : json.substring(open, close + 1);
-        }
 
         private static String string(String json, String key, String fallback) {
             int start = json.indexOf("\"" + key + "\":");
@@ -395,27 +463,7 @@ public final class StaffModeService {
             }
         }
 
-        /** Deserialises a list produced by joining {@link #serializeItem} results with commas. */
-        public static List<ItemStack> deserializeAll(String raw) {
-            List<ItemStack> out = new ArrayList<>();
-            if (raw == null || raw.isBlank()) {
-                return out;
-            }
-            for (String token : raw.split("\\\\")) {
-                String cleaned = token.trim();
-                if (cleaned.isEmpty()) {
-                    continue;
-                }
-                ItemStack item = deserializeItem(cleaned);
-                if (item != null) {
-                    out.add(item);
-                }
-            }
-            return out;
-        }
-    }
-
-    /** Applies the persistent data key used to mark tool items. */
+ /** Applies the persistent data key used to mark tool items. */
     static final class ItemMetaWithKey {
         private ItemMetaWithKey() {
         }

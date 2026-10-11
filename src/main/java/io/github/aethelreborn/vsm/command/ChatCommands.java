@@ -27,8 +27,8 @@ public final class ChatCommands {
             return null;
         }
         return switch (literal.toLowerCase(java.util.Locale.ROOT)) {
-            case "sc" -> return sc(plugin);
-            case "ac" -> return ac(plugin);
+            case "sc" -> sc(plugin);
+            case "ac" -> ac(plugin);
             default -> null;
         };
     }

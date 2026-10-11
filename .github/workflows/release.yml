@@ -55,7 +55,7 @@ jobs:
           curl -fsSL -o paper.jar "$url"
           echo "bf1dcf627364f8a631ab15250d240eb5a8e89faaac523b391e1c61367fce9ff1  paper.jar" | sha256sum -c -
 
-      - name: Smoke test: boot Paper with the plugin and run commands
+      - name: "Smoke test: boot Paper with the plugin and run commands"
         run: |
           set -euo pipefail
           cd /tmp/paper
@@ -89,7 +89,7 @@ jobs:
             exit 1
           fi
 
-      - name: Smoke test: assert clean startup
+      - name: "Smoke test: assert clean startup"
         run: |
           set -euo pipefail
           cd /tmp/paper

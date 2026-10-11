@@ -31,22 +31,22 @@ public final class ToolsCommands {
             return null;
         }
         return switch (literal.toLowerCase(java.util.Locale.ROOT)) {
-            case "freeze" -> return freeze(plugin);
-            case "unfreeze" -> return unfreeze(plugin);
-            case "vanish" -> return vanish(plugin);
-            case "invsee" -> return invsee(plugin);
-            case "endersee" -> return endersee(plugin);
-            case "commandspy" -> return commandspy(plugin);
-            case "socialspy" -> return socialspy(plugin);
-            case "watch" -> return watch(plugin);
-            case "clearchat" -> return clearchat(plugin);
-            case "mutechat" -> return mutechat(plugin);
-            case "slowmode" -> return slowmode(plugin);
-            case "lockdown" -> return lockdown(plugin);
-            case "maintenance" -> return maintenance(plugin);
-            case "near" -> return near(plugin);
-            case "alerts" -> return alerts(plugin);
-            case "staffauth" -> return staffauth(plugin);
+            case "freeze" -> freeze(plugin);
+            case "unfreeze" -> unfreeze(plugin);
+            case "vanish" -> vanish(plugin);
+            case "invsee" -> invsee(plugin);
+            case "endersee" -> endersee(plugin);
+            case "commandspy" -> commandspy(plugin);
+            case "socialspy" -> socialspy(plugin);
+            case "watch" -> watch(plugin);
+            case "clearchat" -> clearchat(plugin);
+            case "mutechat" -> mutechat(plugin);
+            case "slowmode" -> slowmode(plugin);
+            case "lockdown" -> lockdown(plugin);
+            case "maintenance" -> maintenance(plugin);
+            case "near" -> near(plugin);
+            case "alerts" -> alerts(plugin);
+            case "staffauth" -> staffauth(plugin);
             default -> null;
         };
     }

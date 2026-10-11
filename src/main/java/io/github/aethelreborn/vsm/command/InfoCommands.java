@@ -36,17 +36,17 @@ public final class InfoCommands {
             return null;
         }
         return switch (literal.toLowerCase(java.util.Locale.ROOT)) {
-            case "history" -> return history(plugin);
-            case "staffhistory" -> return staffhistory(plugin);
-            case "mutes" -> return mutes(plugin);
-            case "bans" -> return bans(plugin);
-            case "warns" -> return warns(plugin);
-            case "note" -> return note(plugin);
-            case "alts" -> return alts(plugin);
-            case "iphistory" -> return iphistory(plugin);
-            case "namehistory" -> return namehistory(plugin);
-            case "lookup" -> return lookup(plugin);
-            case "seen" -> return seen(plugin);
+            case "history" -> history(plugin);
+            case "staffhistory" -> staffhistory(plugin);
+            case "mutes" -> mutes(plugin);
+            case "bans" -> bans(plugin);
+            case "warns" -> warns(plugin);
+            case "note" -> note(plugin);
+            case "alts" -> alts(plugin);
+            case "iphistory" -> iphistory(plugin);
+            case "namehistory" -> namehistory(plugin);
+            case "lookup" -> lookup(plugin);
+            case "seen" -> seen(plugin);
             default -> null;
         };
     }
