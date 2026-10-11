@@ -139,9 +139,10 @@ public class Menu implements InventoryHolder {
             if (meta != null) {
                 meta.setDisplayName(plain(displayName));
                 if (!lore.isEmpty()) {
-                    List<String> lines = new ArrayList<>(lore.size());
+                    List<net.kyori.adventure.text.Component> lines =
+                            new ArrayList<>(lore.size());
                     for (String line : lore) {
-                        lines.add(plain(line));
+                        lines.add(net.kyori.adventure.text.Component.text(plain(line)));
                     }
                     meta.lore(lines);
                 }

@@ -124,6 +124,16 @@ public final class FreezeService {
         return true;
     }
 
+    /** Toggles the frozen state, reporting the new state. */
+    public boolean toggle(UUID target, String reason, UUID staffUuid, String staffName) {
+        if (isFrozen(target)) {
+            unfreeze(target, staffUuid, staffName);
+            return false;
+        }
+        freeze(target, reason == null ? "No reason given" : reason, staffUuid, staffName, null, 0L);
+        return true;
+    }
+
     /** Releases a freeze. */
     public boolean unfreeze(UUID target, UUID staffUuid, String staffName) {
         FreezeRecord record = frozen.remove(target);

@@ -83,8 +83,13 @@ public abstract class SqlStorage implements StorageProvider {
             }
             if (executor != null) {
                 executor.shutdown();
-                if (!executor.awaitTermination(5L, TimeUnit.SECONDS)) {
+                try {
+                    if (!executor.awaitTermination(5L, TimeUnit.SECONDS)) {
+                        executor.shutdownNow();
+                    }
+                } catch (InterruptedException ex) {
                     executor.shutdownNow();
+                    Thread.currentThread().interrupt();
                 }
             }
             return null;

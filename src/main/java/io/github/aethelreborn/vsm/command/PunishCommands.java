@@ -1,6 +1,7 @@
 package io.github.aethelreborn.vsm.command;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import io.github.aethelreborn.vsm.VisualStudioManagement;
 import io.github.aethelreborn.vsm.config.PermissionNodes;

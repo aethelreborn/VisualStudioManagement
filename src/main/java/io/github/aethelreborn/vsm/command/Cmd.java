@@ -140,7 +140,8 @@ public final class Cmd {
     public static com.mojang.brigadier.suggestion.SuggestionProvider<CommandSourceStack> suggestions(
             Supplier<List<String>> values) {
         return (context, builder) -> {
-            String current = context.getLastChild().getCommand().getInput();
+            String[] parts = context.getInput().split(" ");
+            String current = parts.length == 0 ? "" : parts[parts.length - 1];
             for (String value : values.get()) {
                 if (current.isEmpty() || value.toLowerCase(java.util.Locale.ROOT)
                         .startsWith(current.toLowerCase(java.util.Locale.ROOT))) {

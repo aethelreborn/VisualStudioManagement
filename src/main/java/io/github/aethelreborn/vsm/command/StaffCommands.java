@@ -41,7 +41,6 @@ public final class StaffCommands {
                 parent.then(node);
             }
         }
-        parent.then(add(plugin));
         parent.then(remove(plugin));
         parent.then(setRank(plugin));
         parent.then(promote(plugin));
