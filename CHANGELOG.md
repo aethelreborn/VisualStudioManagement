@@ -9,7 +9,7 @@ All notable changes are recorded here. The format follows
 ### Added
 
 - Paper plugin (`paper-plugin.yml`) with a bootstrapper and a library-resolving loader; the full
-  Brigadier command tree is registered through `LifecycleEvents.COMMANDS`.
+  Brigadier command tree is registered through `LifecycleEvents.COMMANDS` from `onEnable`.
 - Rank system driven by `ranks.yml` with inheritance flattened at load, strict outranking, rank-change
   guards and a last-owner lock-out guard.
 - `ActionService` as the single choke point for every staff action, covering permission checks,
@@ -34,8 +34,17 @@ All notable changes are recorded here. The format follows
 
 ### Fixed during bring-up
 
-- The PlaceholderAPI expansion is loaded through a nested type so the plugin remains loadable on servers
-  without PlaceholderAPI installed.
+- Commands were registered from the bootstrapper, whose lifecycle-event owner is the
+  `BootstrapContext` rather than the `Plugin`. Paper filters the `COMMANDS` event with
+  `Plugin.class::isInstance`, so the handler was silently dropped and no command was ever
+  registered. Registration now happens from `onEnable` through the plugin's own lifecycle
+  manager, which is the path Paper's own test plugin uses.
+- The `/vsm` root literal gated itself on raw `Sender#hasPermission`, which returns `false`
+  for the console because `console.hasAllPermissions` defaults to `false`. It now uses the
+  same `Cmd.requires` helper as every sub-command, so the console is no longer locked out.
+- Three message keys referenced by the code were missing from `messages.yml`
+  (`ranks-header`, `ranks-entry`, `invalid-gamemode`), and `ranks-entry` named its
+  placeholder `<permissions>` while the command passed `nodes`.
 - Side-branch ranks are no longer treated as ladder steps by `/staff promote` and `/staff demote`.
 - A template with an unparsable duration is disabled instead of silently escalating to a permanent
   punishment.

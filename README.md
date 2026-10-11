@@ -128,7 +128,7 @@ The repository builds entirely in GitHub Actions — nothing is built on a devel
 ```
 src/main/java/io/github/aethelreborn/vsm
 ├── VisualStudioManagement.java   main class, owns every service
-├── VsmBootstrap.java             Paper bootstrapper (Brigadier command registration)
+├── VsmBootstrap.java             Paper bootstrapper (metadata + classpath only)
 ├── VsmLoader.java                Paper loader (library resolution)
 ├── api/                          public API and custom events
 ├── command/                      the /vsm Brigadier tree, one module per feature group
