@@ -8,6 +8,7 @@ import io.papermc.paper.command.brigadier.Commands;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Registers the {@code /vsm} root literal and the standalone aliases (spec 8.0).
@@ -83,12 +84,18 @@ public final class CommandRegistrar {
         return node;
     }
 
-    /** Called from the bootstrap lifecycle handler; never touches the plugin before {@code onEnable}. */
-    public static void register(io.papermc.paper.command.brigadier.Commands registrar,
-                                VisualStudioManagement plugin, String rootLiteral, boolean aliases) {
-        if (plugin == null) {
+    /**
+     * Registers the command tree. Invoked from the Paper {@code COMMANDS} lifecycle event, which fires after
+     * {@code onEnable}, so every service the executors touch is already constructed.
+     */
+    public static void register(Commands registrar, JavaPlugin javaPlugin) {
+        if (javaPlugin == null) {
             return;
         }
+        VisualStudioManagement plugin = (VisualStudioManagement) javaPlugin;
+        var config = plugin.vsmConfig();
+        String rootLiteral = config.rootCommand();
+        boolean aliases = config.standaloneAliases();
         String root = rootLiteral.toLowerCase(Locale.ROOT);
         LiteralArgumentBuilder<CommandSourceStack> rootNode = Commands.literal(root)
                 .requires(stack -> stack.getSender().hasPermission(PermissionNodes.USE)
@@ -121,10 +128,5 @@ public final class CommandRegistrar {
             }
             registrar.register(node.build(), (String) null);
         }
-    }
-
-    /** Referenced by {@link io.github.aethelreborn.vsm.VsmBootstrap} so the class is loaded early. */
-    public static void touch() {
-        // Intentionally empty.
     }
 }

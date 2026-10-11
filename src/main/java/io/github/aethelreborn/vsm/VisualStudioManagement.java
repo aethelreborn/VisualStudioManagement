@@ -1,7 +1,6 @@
 package io.github.aethelreborn.vsm;
 
 import io.github.aethelreborn.vsm.api.VsmAPI;
-import io.github.aethelreborn.vsm.command.CommandRegistrar;
 import io.github.aethelreborn.vsm.config.AutoModConfig;
 import io.github.aethelreborn.vsm.config.Messages;
 import io.github.aethelreborn.vsm.config.PermissionNodes;
@@ -379,8 +378,6 @@ public final class VisualStudioManagement extends JavaPlugin {
         actionService.freezes(freezeService);
 
         api = new VsmAPI(actionService, punishmentService, permissionService);
-        VsmBootstrap.setCommandRegistration(registrar ->
-                CommandRegistrar.register(registrar, this, vsmConfig.rootCommand(), vsmConfig.standaloneAliases()));
     }
 
     private String highestRankId() {
@@ -421,8 +418,9 @@ public final class VisualStudioManagement extends JavaPlugin {
     }
 
     private void registerCommands() {
-        // Commands are registered by VsmBootstrap during the Paper COMMANDS lifecycle event.
-        // The handler is installed in buildServices(); nothing else is required here.
+        // Paper fires LifecycleEvents.COMMANDS once every plugin has finished enabling, so the handler is
+        // installed now and the tree is built when the event arrives.
+        VsmBootstrap.install(this);
     }
 
     private void registerTasks() {

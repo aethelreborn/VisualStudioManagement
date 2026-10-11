@@ -1,46 +1,48 @@
 package io.github.aethelreborn.vsm;
 
 import io.github.aethelreborn.vsm.command.CommandRegistrar;
-import io.github.aethelreborn.vsm.api.VsmAPI;
-import java.util.function.Consumer;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.bootstrap.BootstrapContext;
 import io.papermc.paper.plugin.bootstrap.PluginBootstrap;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
+import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Paper bootstrapper (spec 4.1, 17.1).
  *
- * <p>Commands are registered here through {@link LifecycleEvents#COMMANDS} so they exist for datapack
- * command parsing as well. The command tree itself only captures lazy references, so building it before the
- * plugin instance exists is safe: every executor and suggestion provider resolves the singleton at call
- * time, long after {@code onEnable} has finished.
+ * <p>The command tree is built here, but the handler is installed from {@link #install(JavaPlugin)} during
+ * {@code onEnable} rather than from {@link #bootstrap(BootstrapContext)}.
+ *
+ * <p>Paper fires {@link LifecycleEvents#COMMANDS} with the owner filter {@code Plugin.class::isInstance}
+ * ({@code LifecycleEventRunner#callReloadableRegistrarEvent}). A handler registered from a bootstrapper is
+ * owned by the {@link BootstrapContext} instead of the {@code Plugin}, so it is filtered out and never runs;
+ * it additionally sets {@code blocksPluginReloading}, which would break {@code /reload}. Registering through
+ * the plugin's own lifecycle manager is the supported path and is what Paper's own test plugin does.
+ *
+ * <p>The tree only captures lazy references, so building it inside the handler is safe: every executor and
+ * suggestion provider resolves the services at call time, long after {@code onEnable} has finished.
  */
 public final class VsmBootstrap implements PluginBootstrap {
 
-    private static volatile Consumer<Commands> commandRegistration = registrar -> {
-    };
-
     @Override
     public void bootstrap(BootstrapContext context) {
-        context.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event ->
-                commandRegistration.accept(event.registrar()));
+        // Intentionally empty: see the class javadoc. The bootstrapper stays declared so the loader,
+        // dependency classpath and plugin metadata are resolved exactly as the specification describes.
     }
 
-    /** Installed by the main plugin before it enables. */
-    public static void setCommandRegistration(Consumer<Commands> registration) {
-        if (registration != null) {
-            commandRegistration = registration;
-        }
+    /**
+     * Installs the command handler on the plugin's lifecycle manager.
+     *
+     * <p>Must be called from {@code onEnable}: Paper closes lifecycle registration as soon as {@code onEnable}
+     * returns, and the {@code COMMANDS} event fires once the server has finished loading plugins.
+     */
+    public static void install(JavaPlugin plugin) {
+        plugin.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event ->
+                CommandRegistrar.register(event.registrar(), plugin));
     }
 
-    /** Convenience used by tests and the {@code /vsm debug} health screen. */
-    public static boolean hasRegistration() {
-        return commandRegistration != null;
-    }
-
-    static {
-        // Guard against the plugin class being loaded before the registrar is installed.
-        CommandRegistrar.touch();
+    /** Kept for tests and for {@link CommandRegistrar} callers that already hold a registrar. */
+    public static void register(Commands registrar, JavaPlugin plugin) {
+        CommandRegistrar.register(registrar, plugin);
     }
 }
