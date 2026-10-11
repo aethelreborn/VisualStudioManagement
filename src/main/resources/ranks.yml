@@ -1,0 +1,172 @@
+# Visual Studio Management ranks (spec 6.2).
+#
+# Ranks are data, not code: add, remove or reweight them freely.
+# Weights decide the outranking order (spec 6.3): an actor may only act on a
+# strictly lower weight, and nobody may promote to a rank at or above their own.
+#
+# `staff: false` keeps a rank out of staff-only lists, notifications and webhooks.
+
+ranks:
+  player:
+    display: "Player"
+    weight: 0
+    parent: null
+    prefix: ""
+    staff: false
+    permissions:
+      - vsm.report
+      - vsm.helpop
+
+  # Side branch: inherits only from player, never from the staff ladder.
+  youtuber:
+    display: "YouTuber"
+    weight: 15
+    parent: player
+    prefix: "<gradient:#ff7b00:#ff3d81><bold></bold></gradient>"
+    staff: false
+    permissions:
+      - vsm.youtuber.freeze
+      - vsm.youtuber.unfreeze
+      - vsm.youtuber.move
+      - vsm.youtuber.move.others
+      - vsm.youtuber.tp
+      - vsm.youtuber.gamemode.survival
+      - vsm.youtuber.gamemode.adventure
+      - vsm.youtuber.gamemode.creative
+      - vsm.youtuber.gamemode.toggle
+
+  trainee:
+    display: "Trainee"
+    weight: 10
+    parent: player
+    prefix: "<gray>[<green>Trainee</green>]"
+    staff: true
+    permissions:
+      - vsm.use
+      - vsm.staffchat
+      - vsm.alerts
+      - vsm.reports.view
+      - vsm.notes.view
+      - vsm.tp
+
+  helper:
+    display: "Helper"
+    weight: 20
+    parent: player
+    prefix: "<gray>[<aqua>Helper</aqua>]"
+    staff: true
+    permissions:
+      - vsm.use
+      - vsm.staffchat
+      - vsm.alerts
+      - vsm.warn
+      - vsm.unwarn
+      - vsm.warnings
+      - vsm.history
+      - vsm.reports.view
+      - vsm.reports.claim
+      - vsm.reports.close
+      - vsm.reports.teleport
+      - vsm.tp
+      - vsm.back
+      - vsm.spectate
+      - vsm.seen
+      - vsm.notes.view
+      - vsm.checkban
+      - vsm.checkmute
+      - vsm.staff.list
+      - vsm.staff.info
+      - vsm.lookup
+
+  moderator:
+    display: "Moderator"
+    weight: 40
+    parent: helper
+    prefix: "<gray>[<blue>Mod</blue>]"
+    staff: true
+    permissions:
+      - vsm.mute
+      - vsm.tempmute
+      - vsm.unmute
+      - vsm.shadowmute
+      - vsm.kick
+      - vsm.tempban
+      - vsm.freeze
+      - vsm.vanish
+      - vsm.vanish.see
+      - vsm.invsee
+      - vsm.tphere
+      - vsm.fly
+      - vsm.speed
+      - vsm.gamemode
+      - vsm.staffmode
+      - vsm.notes.add
+      - vsm.notes.view
+      - vsm.alts
+      - vsm.punish
+      - vsm.socialspy
+      - vsm.banlist
+      - vsm.mutelist
+
+  senior_mod:
+    display: "Senior Mod"
+    weight: 60
+    parent: moderator
+    prefix: "<gray>[<light_purple>Senior</light_purple>]"
+    staff: true
+    permissions:
+      - vsm.mute
+      - vsm.ipmute
+      - vsm.ban
+      - vsm.unban
+      - vsm.punishment.modify
+      - vsm.punishment.remove
+      - vsm.punishment.silent
+      - vsm.endersee
+      - vsm.tpoffline
+      - vsm.clearchat
+      - vsm.mutechat
+      - vsm.slowmode
+      - vsm.commandspy
+      - vsm.tempipban
+      - vsm.adminchat
+      - vsm.iphistory
+      - vsm.purge
+
+  admin:
+    display: "Admin"
+    weight: 80
+    parent: senior_mod
+    prefix: "<gray>[<gold>Admin</gold>]"
+    staff: true
+    permissions:
+      - vsm.ipban
+      - vsm.ipunban
+      - vsm.ipban.range
+      - vsm.nameban
+      - vsm.tpall
+      - vsm.lockdown
+      - vsm.reload
+      - vsm.ip.view
+      - vsm.invsee.edit
+      - vsm.import
+      - vsm.export
+      - vsm.staff.manage
+      - vsm.staff.list
+      - vsm.staff.info
+      - vsm.audit.view
+      - vsm.maintenance
+      - vsm.watch
+
+  owner:
+    display: "Owner"
+    weight: 100
+    parent: admin
+    prefix: "<gray>[<red><bold>Owner</bold></red>]"
+    staff: true
+    permissions:
+      - vsm.staff.ranks
+      - vsm.override
+      - vsm.purge
+      - vsm.debug
+      - vsm.audit.export

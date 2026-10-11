@@ -1,0 +1,54 @@
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Compile and test (Java 25 / Paper 26.2)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build and test
+        uses: gradle/actions/gradle-build-action@v4
+        with:
+          build-path: .
+
+      - name: Verify jar contents
+        run: |
+          set -euo pipefail
+          JAR=$(ls build/libs/VisualStudioManagement-*.jar | grep -v sources | head -1)
+          echo "Artifact: $JAR"
+          unzip -l "$JAR" | grep -E "paper-plugin.yml|VisualStudioManagement.class|VsmBootstrap.class|VsmLoader.class"
+          unzip -p "$JAR" paper-plugin.yml
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: VisualStudioManagement-jar
+          path: build/libs/VisualStudioManagement-*.jar
+          if-no-files-found: error
+          retention-days: 30

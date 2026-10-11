@@ -1,0 +1,131 @@
+name: Release
+
+on:
+  push:
+    tags: [ 'v*' ]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to release (e.g. v1.0.0)'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build, smoke-test on a real Paper server, publish release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build and test
+        uses: gradle/actions/gradle-build-action@v4
+        with:
+          build-path: .
+          args: build
+
+      - name: Resolve release tag
+        id: tag
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "tag=${{ inputs.tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Download Paper 26.2 server
+        working-directory: /tmp/paper
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/paper && cd /tmp/paper
+          url="https://fill-data.papermc.io/v1/objects/bf1dcf627364f8a631ab15250d240eb5a8e89faaac523b391e1c61367fce9ff1/paper-26.2-133.jar"
+          curl -fsSL -o paper.jar "$url"
+          echo "bf1dcf627364f8a631ab15250d240eb5a8e89faaac523b391e1c61367fce9ff1  paper.jar" | sha256sum -c -
+
+      - name: Smoke test: boot Paper with the plugin and run commands
+        run: |
+          set -euo pipefail
+          cd /tmp/paper
+          JAR=$(ls "$GITHUB_WORKSPACE"/build/libs/VisualStudioManagement-*.jar | grep -v sources | head -1)
+          mkdir -p plugins
+          cp "$JAR" plugins/
+          echo "eula=true" > eula.txt
+          cat > server.properties <<'PROPS'
+          online-mode=false
+          level-type=minecraft\:flat
+          level-name=world
+          spawn-protection=0
+          view-distance=4
+          simulation-distance=4
+          max-players=5
+          enable-command-block=false
+          enable-status=false
+          sync-chunk-writes=false
+          PROPS
+          mkfifo console_in
+          ( sleep 75; echo "vsm"; sleep 4; echo "vsm reload"; sleep 4; echo "stop"; ) > console_in &
+          set +e
+          timeout 300 java -Xms512M -Xmx1G -XX:+UseG1GC -Dcom.mojang.eula.agree=true -jar paper.jar --nogui < console_in > server.log 2>&1
+          code=$?
+          set -e
+          echo "--- server exit code: $code"
+          echo "--- log tail:"
+          tail -n 80 server.log
+          if [ $code -ne 0 ]; then
+            echo "::error::Paper exited with code $code"
+            exit 1
+          fi
+
+      - name: Smoke test: assert clean startup
+        run: |
+          set -euo pipefail
+          cd /tmp/paper
+          echo "=== plugin enable lines:"
+          grep -E "VisualStudioManagement|VSM" server.log | head -40 || true
+          failed=0
+          for pattern in "Could not load" "Error occurred while enabling" "Failed to load plugin" "Unable to load plugin" "Exception in thread \"main\"" "Could not enable plugin"; do
+            if grep -qF "$pattern" server.log; then
+              echo "::error::Found failure marker in server log: $pattern"
+              grep -nF "$pattern" server.log | head -10
+              failed=1
+            fi
+          done
+          if [ $failed -ne 0 ]; then
+            exit 1
+          fi
+          if ! grep -q "Done (" server.log; then
+            echo "::error::Server never reached 'Done' state"
+            exit 1
+          fi
+          if ! grep -q "Enabling VisualStudioManagement" server.log; then
+            echo "::error::Plugin was not enabled"
+            exit 1
+          fi
+          echo "Smoke test passed."
+
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.tag.outputs.tag }}
+        run: |
+          set -euo pipefail
+          JAR=$(ls build/libs/VisualStudioManagement-*.jar | grep -v sources | head -1)
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "$JAR" --clobber
+          else
+            gh release create "$TAG" "$JAR" \
+              --title "Visual Studio Management $TAG" \
+              --generate-notes
+          fi
+          gh release view "$TAG" --json url --jq .url

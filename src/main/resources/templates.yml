@@ -1,0 +1,48 @@
+# Punishment templates and escalation ladders (spec 9.3).
+#
+# `/vsm punish <player> <template>` applies the ladder step that matches how many
+# punishments the target already has from this template.
+
+templates:
+  spam:
+    display: "Chat spam"
+    reason: "Spamming chat"
+    ladder:
+      - { type: WARN }
+      - { type: TEMP_MUTE, duration: 30m }
+      - { type: TEMP_MUTE, duration: 6h }
+      - { type: TEMP_MUTE, duration: 3d }
+
+  hacking:
+    display: "Hacked client"
+    reason: "Use of unfair modifications"
+    ladder:
+      - { type: TEMP_BAN, duration: 7d, flags: [evidence-required] }
+      - { type: BAN, flags: [evidence-required] }
+
+  evasion:
+    display: "Ban evasion"
+    reason: "Ban evasion"
+    ladder:
+      - { type: IP_BAN, flags: [also-ban-accounts] }
+
+  freeze-logout:
+    display: "Frozen logout"
+    reason: "Logging out while frozen"
+    ladder:
+      - { type: TEMP_BAN, duration: 7d }
+
+# Automatic escalation from accumulated active warnings.
+warning-thresholds:
+  3:
+    type: TEMP_MUTE
+    duration: 1h
+    reason: "3 warnings reached"
+  5:
+    type: TEMP_BAN
+    duration: 1d
+    reason: "5 warnings reached"
+  8:
+    type: TEMP_BAN
+    duration: 7d
+    reason: "8 warnings reached"

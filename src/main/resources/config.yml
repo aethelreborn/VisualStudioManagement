@@ -1,0 +1,231 @@
+prefix: "<dark_gray>[<aqua>VSM</aqua>]</dark_gray> "
+
+settings:
+  language: "en"
+  legacy-color-codes: false
+  # INTERNAL | BUKKIT | BOTH
+  permission-mode: BOTH
+  op-bypass: false
+  server-name: "main"
+  appeal-url: "discord.gg/yourserver"
+  check-for-updates: true
+  metrics: false
+
+storage:
+  # YAML | SQLITE | MYSQL
+  type: SQLITE
+  sqlite:
+    file: "database.db"
+  mysql:
+    host: "localhost"
+    port: 3306
+    database: "vsm"
+    user: "root"
+    password: ""
+    use-ssl: false
+    pool:
+      max-size: 10
+      min-idle: 2
+      max-lifetime-ms: 1800000
+      connection-timeout-ms: 10000
+  expiry-check-interval-seconds: 30
+  # 0 = never
+  auto-prune-days: 0
+  backups:
+    enabled: true
+    interval-hours: 24
+    keep: 7
+
+staff:
+  default-rank: "helper"
+  allow-self-rank-change: false
+  inactivity-alert-days: 30
+
+punishments:
+  require-reason: true
+  min-reason-length: 3
+  max-reason-length: 256
+  id-prefix: "VP"
+  # true replaces readable ids with obscured numeric ones
+  id-numeric-mode: false
+  broadcast:
+    ban: true
+    tempban: true
+    ipban: true
+    mute: false
+    tempmute: false
+    kick: false
+    warn: false
+  ban-ip-on-ban: false
+  also-ban-accounts-on-ipban: true
+  ip-history-window-days: 90
+  ipban:
+    allow-private: false
+    allow-ranges: true
+    max-range-prefix-v4: 24
+    max-range-prefix-v6: 64
+  blocked-commands-while-muted: ["/me", "/say", "/msg", "/tell", "/w", "/reply", "/r", "/mail", "/nick"]
+  # "none" or "unlimited" means no cap
+  max-durations:
+    helper:
+      tempmute: "1h"
+      tempwarn: "30d"
+    moderator:
+      tempban: "7d"
+      tempmute: "12h"
+      tempipban: "none"
+    senior_mod:
+      tempban: "30d"
+      tempmute: "7d"
+      tempipban: "7d"
+    admin:
+      tempban: "unlimited"
+      tempipban: "unlimited"
+  permanent-ban-min-rank: admin
+  permanent-mute-min-rank: senior_mod
+  ipban-min-rank: admin
+  tempipban-min-rank: senior_mod
+  exempt-permission-checks: true
+
+reports:
+  max-open-reports-per-player: 3
+  cooldown-seconds: 60
+  notify-staff: true
+  allow-reporting-staff: false
+  merge-duplicates-minutes: 10
+  escalate-threshold: 3
+  escalate-window-minutes: 30
+
+freeze:
+  block-commands: true
+  allowed-commands: ["/msg", "/reply", "/report", "/helpop"]
+  block-damage-dealt: true
+  punish-on-logout:
+    enabled: true
+    template: "freeze-logout"
+  effects:
+    blindness: false
+    title: true
+
+vanish:
+  hide-from-tab: true
+  suppress-join-leave: true
+  silent-containers: true
+  block-item-pickup: true
+  auto-on-join: false
+  persist-across-relogs: true
+
+teleport:
+  back-history: 5
+  safe-teleport: true
+  world-blacklist: []
+  confirm-tpall: true
+  # staff are exempt by default
+  cooldown-seconds: 0
+
+staffmode:
+  save-to-disk: true
+  vanish: true
+  fly: true
+  invulnerable: true
+  allow-building: false
+
+movement:
+  speed-cap:
+    helper: 3
+    moderator: 5
+    senior_mod: 8
+    admin: 10
+    owner: 10
+
+invsee:
+  offline-support: false
+  edit-requires-confirmation: true
+
+commands:
+  root: "vsm"
+  standalone-aliases: true
+
+youtuber:
+  rank-id: "youtuber"
+  freeze:
+    max-duration: "10m"
+    max-concurrent: 5
+    cooldown-seconds: 5
+    notify-target: true
+    allowed-commands: ["/msg", "/reply", "/report", "/helpop"]
+    # never for youtuber freezes
+    punish-on-logout: false
+    release-when-actor-leaves: true
+  move:
+    allow-others: true
+    max-distance: 100
+    allow-cross-world: false
+    world-blacklist: []
+    cooldown-seconds: 3
+  tp:
+    cooldown-seconds: 3
+    allow-to-staff: false
+    allow-cross-world: true
+    world-blacklist: []
+  gamemode:
+    allowed: [SURVIVAL, ADVENTURE, CREATIVE]
+    switch-cooldown-seconds: 2
+    creative-worlds: []
+    separate-inventories: true
+    reset-on-quit: SURVIVAL
+    creative-restrictions:
+      block-item-drop: true
+      block-pvp: true
+      block-container-access: false
+
+lockdown:
+  allow-returning-players: true
+  message-key: "lockdown"
+
+maintenance:
+  enabled: false
+  whitelist: []
+
+security:
+  staff-pin:
+    enabled: false
+    max-attempts: 3
+  staff-ip-lock: false
+  session-minutes: 0
+  two-person-rule:
+    enabled: false
+    actions: [BAN, IP_BAN, PURGE]
+  rate-limits:
+    ban:
+      max: 5
+      per-minutes: 10
+    mute:
+      max: 15
+      per-minutes: 10
+    kick:
+      max: 20
+      per-minutes: 10
+
+privacy:
+  hash-ips: false
+  log-raw-ips: false
+  ip-history-retention-days: 180
+  mask-ips-for-staff: true
+
+alts:
+  alert-on-banned-link: true
+  # NONE | ALERT | KICK
+  auto-action: ALERT
+
+audit:
+  retention-days: 365
+  console-major-actions: true
+  tamper-evident: true
+
+webhooks:
+  discord:
+    enabled: false
+    url: ""
+    events: [BAN, TEMP_BAN, IP_BAN, UNBAN, MUTE, KICK, REPORT_CREATED, STAFF_RANK_CHANGE, RATE_LIMIT_HIT]
+    mention-role-id: ""

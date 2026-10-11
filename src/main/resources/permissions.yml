@@ -1,0 +1,132 @@
+# Reference copy of the permission tree (spec 7 and 17.2).
+#
+# The plugin registers these nodes with Bukkit at runtime from
+# PermissionNodes.java, which is the single source of truth. This file mirrors
+# that tree so permission plugins (LuckPerms, LP, ...) can be configured from a
+# familiar structure. See docs/permissions.md for the full reference.
+
+vsm.*:
+  default: false
+  children:
+    vsm.owner: true
+
+vsm.owner:
+  default: false
+  description: "Everything, including rank editing and security overrides"
+  children:
+    vsm.admin: true
+    vsm.youtuber: true
+    vsm.staff.ranks: true
+    vsm.override: true
+    vsm.purge: true
+    vsm.debug: true
+    vsm.audit.export: true
+
+vsm.admin:
+  default: false
+  description: "Server administrator"
+  children:
+    vsm.senior: true
+    vsm.staff.manage: true
+    vsm.ban: true
+    vsm.unban: true
+    vsm.ipban: true
+    vsm.ipunban: true
+    vsm.ipban.range: true
+    vsm.tpall: true
+    vsm.lockdown: true
+    vsm.reload: true
+    vsm.ip.view: true
+    vsm.invsee.edit: true
+    vsm.import: true
+    vsm.export: true
+    vsm.adminchat: true
+    vsm.audit.view: true
+
+vsm.senior:
+  default: false
+  description: "Senior moderator"
+  children:
+    vsm.moderator: true
+    vsm.mute: true
+    vsm.tempipban: true
+    vsm.punishment.modify: true
+    vsm.punishment.remove: true
+    vsm.endersee: true
+    vsm.tpoffline: true
+    vsm.clearchat: true
+    vsm.mutechat: true
+    vsm.slowmode: true
+    vsm.commandspy: true
+    vsm.shadowmute: true
+    vsm.ipmute: true
+
+vsm.moderator:
+  default: false
+  description: "Moderator"
+  children:
+    vsm.helper: true
+    vsm.tempmute: true
+    vsm.unmute: true
+    vsm.kick: true
+    vsm.tempban: true
+    vsm.freeze: true
+    vsm.vanish: true
+    vsm.invsee: true
+    vsm.tphere: true
+    vsm.fly: true
+    vsm.speed: true
+    vsm.gamemode: true
+    vsm.staffmode: true
+    vsm.notes.add: true
+    vsm.alts: true
+    vsm.punish: true
+    vsm.vanish.see: true
+    vsm.socialspy: true
+
+vsm.helper:
+  default: false
+  description: "New staff member"
+  children:
+    vsm.use: true
+    vsm.staffchat: true
+    vsm.alerts: true
+    vsm.warn: true
+    vsm.warnings: true
+    vsm.history: true
+    vsm.reports.view: true
+    vsm.reports.claim: true
+    vsm.reports.close: true
+    vsm.reports.teleport: true
+    vsm.tp: true
+    vsm.back: true
+    vsm.spectate: true
+    vsm.seen: true
+    vsm.notes.view: true
+    vsm.checkban: true
+    vsm.checkmute: true
+    vsm.staff.list: true
+    vsm.staff.info: true
+
+# Side branch: NOT a child of helper or any staff rank.
+vsm.youtuber:
+  default: false
+  description: "YouTuber role"
+  children:
+    vsm.youtuber.freeze: true
+    vsm.youtuber.unfreeze: true
+    vsm.youtuber.move: true
+    vsm.youtuber.move.others: true
+    vsm.youtuber.tp: true
+    vsm.youtuber.gamemode.survival: true
+    vsm.youtuber.gamemode.adventure: true
+    vsm.youtuber.gamemode.creative: true
+    vsm.youtuber.gamemode.toggle: true
+
+vsm.report:
+  default: true
+  description: "Report a player"
+
+vsm.helpop:
+  default: true
+  description: "Ask staff for help"

@@ -1,0 +1,48 @@
+# Auto-moderation (spec 11.7). All checks run on the async chat thread against
+# cached data; players with vsm.exempt.automod bypass everything.
+
+automod:
+  enabled: true
+
+  spam:
+    messages-per-window: 5
+    window-seconds: 10
+    identical-repeat-limit: 3
+    similarity-threshold: 0.85
+
+  caps:
+    max-percent: 70
+    min-length: 12
+
+  char-flood:
+    max-repeats: 12
+
+  unicode:
+    max-per-message: 12
+
+  command-rate:
+    max-per-window: 12
+    window-seconds: 10
+
+  escalation:
+    warn-points: 3
+    mute-points: 8
+    mute-duration: "1h"
+
+  advertising:
+    whitelist:
+      - "example.com"
+      - "minecraft.net"
+      - "mojang.com"
+
+  # action: CANCEL | REPLACE | WARN | STAFF_ALERT | TEMP_MUTE
+  blocked-words:
+    dumb:
+      message: "insult"
+      action: CANCEL
+
+  blocked-patterns:
+    link:
+      pattern: "(https?://|www\\.)\\S+"
+      message: "advertising"
+      action: CANCEL

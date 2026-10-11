@@ -1,0 +1,22 @@
+name: ${name}
+version: '${version}'
+main: ${main}
+api-version: '${apiVersion}'
+description: ${description}
+website: https://github.com/aethelreborn/VisualStudioManagement
+authors: [aethelreborn]
+load: POSTWORLD
+bootstrapper: ${bootstrapper}
+loader: ${loader}
+
+# Paper plugins cannot see other plugins unless they are declared here.
+dependencies:
+  server:
+    PlaceholderAPI:
+      load: BEFORE
+      required: false
+      join-classpath: true
+
+# Nodes are registered from permissions.yml at runtime so the hierarchy can be
+# generated from the single source of truth in PermissionNodes.
+permissions: {}

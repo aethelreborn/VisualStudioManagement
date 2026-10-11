@@ -1,0 +1,326 @@
+# All user-visible text (spec 3.3). MiniMessage formatting, no hard-coded strings in Java.
+#
+# Placeholders in use: <player>, <target>, <staff>, <reason>, <duration>, <expires>,
+# <id>, <type>, <appeal>, <server>, <ip_masked>, plus per-message extras.
+#
+# Player supplied values are always inserted unparsed, so a reason containing
+# <click:run_command:...> renders as plain text.
+
+# ----------------------------------------------------------------- generic
+no-permission: "<red>You do not have permission to use this command."
+staff-only: "<red>This command is for staff members only."
+player-only-command: "<red>Only a player can run this command."
+player-not-found: "<red>Player not found."
+not-staff: "<red>That player is not on the staff whitelist."
+action-cancelled: "<gray>Action cancelled."
+action-failed: "<red>The action could not be completed."
+usage: "<gray>Usage: <command>"
+invalid-coordinates: "<red>Those coordinates are not valid. Use numbers or ~ for relative values."
+world-not-found: "<red>No such world: <white><world></white>."
+world-blacklisted: "<red>Teleporting into <white><world></white> is disabled."
+no-rank-change: "<red>That rank is already the highest or lowest in the ladder."
+unknown-rank: "<red>Unknown rank: <white><rank></white>."
+
+# --------------------------------------------------------------- approvals
+cannot-punish-self: "<red>You cannot do that to yourself."
+cannot-punish-higher: "<red>You cannot do this to a player of equal or higher rank."
+cannot-punish-exempt: "<red><player> is exempt from this punishment."
+cannot-promote-to-rank: "<red>You cannot grant a rank at or above your own."
+cannot-change-own-rank: "<red>You cannot change your own rank."
+last-owner-guard: "<red>The last owner cannot be removed or demoted."
+rank-unchanged: "<red>That player already holds that rank."
+rank-changed-ok: "<green>Rank for <player> set to <white><rank></white>."
+rate-limit-hit: "<red>You reached the rate limit for that action and are temporarily suspended."
+freeze-exempt: "<red>That player cannot be frozen."
+
+# ------------------------------------------------------------- punishments
+reason-required: "<red>You must provide a reason."
+invalid-duration: "<red>Invalid duration. Examples: 30s, 10m, 2h, 7d, 1d12h."
+duration-too-long: "<red>Your rank may only issue <max> for this punishment."
+invalid-punishment-type: "<red>Unknown punishment type."
+punishment-issued-ok: "<green><type> applied to <player>. ID: <white><id>"
+punishment-removed-ok: "<green>Removed <type> from <target> (<id>)."
+punishment-modified-ok: "<green>Punishment <id> updated (<field>)."
+punishment-not-found: "<red>No punishment found for that id, player or address."
+punishment-already-inactive: "<red>That punishment is no longer active."
+punishment-id-required: "<red>A punishment id is required."
+unknown-modify-field: "<red>You can only modify <duration> or <reason>."
+punishment-lifted: "<green>Your <type> punishment was lifted."
+punishment-expired: "<green>Your <type> punishment expired."
+punishment-broadcast: "<gray><staff> <type> <player> <gray>(<reason>) <dark_gray>- <expires>"
+punishment-detail: "<gold><type> <id> <gray>| target <white><target> <gray>| by <white><staff> <gray>| <expires>"
+evidence-required: "<red>This template requires evidence: add <white>-e <url></white>."
+
+# --------------------------------------------------------------- ban screens
+screen-ban: |
+  <red><bold>You are banned from this server.</bold></red>
+
+  <gray>Reason: <white><reason>
+  <gray>Banned by: <white><staff>
+  <gray>Expires: <white>Never
+  <gray>Punishment ID: <white><id>
+
+  <gray>Appeal: <aqua><appeal>
+
+screen-tempban: |
+  <red><bold>You are temporarily banned from this server.</bold></red>
+
+  <gray>Reason: <white><reason>
+  <gray>Banned by: <white><staff>
+  <gray>Expires: <white><expires>
+  <gray>Punishment ID: <white><id>
+
+  <gray>Appeal: <aqua><appeal>
+
+screen-ipban: |
+  <red><bold>You are banned from this server.</bold></red>
+
+  <gray>Reason: <white><reason>
+  <gray>Banned by: <white><staff>
+  <gray>Expires: <white>Never
+  <gray>Punishment ID: <white><id>
+
+  <gray>Appeal: <aqua><appeal>
+
+screen-ipban-temp: |
+  <red><bold>You are temporarily banned from this server.</bold></red>
+
+  <gray>Reason: <white><reason>
+  <gray>Banned by: <white><staff>
+  <gray>Expires: <white><expires>
+  <gray>Punishment ID: <white><id>
+
+  <gray>Appeal: <aqua><appeal>
+
+screen-nameban: |
+  <red><bold>That username is not allowed on this server.</bold></red>
+
+  <gray>Reason: <white><reason>
+  <gray>Banned by: <white><staff>
+
+  <gray>Appeal: <aqua><appeal>
+
+screen-kick: |
+  <red><bold>You were kicked from this server.</bold></red>
+
+  <gray>Reason: <white><reason>
+  <gray>By: <white><staff>
+  <gray>Punishment ID: <white><id>
+
+screen-maintenance: |
+  <red><bold>The server is under maintenance.</bold></red>
+
+  <gray>Please try again shortly.
+
+screen-lockdown: |
+  <red><bold>The server is locked down.</bold></red>
+
+  <gray>Only returning players may join right now.
+
+motd-maintenance: "<red><bold>Under maintenance</bold></red> <dark_gray>| <gray>please check back soon"
+
+# --------------------------------------------------------------------- IP
+invalid-ip: "<red>That is not a valid IP address or range."
+no-known-ip: "<red>No known address for that player. Use a literal IP instead."
+ip-banned-ok: "<green>IP banned. Punishment ID: <white><id>"
+ip-unbanned-ok: "<green>IP ban removed (<id>)."
+ip-ban-private-blocked: "<red>Refusing to ban a private/loopback address."
+ip-ban-own-ip: "<red>You cannot ban your own address."
+ip-ban-range-disabled: "<red>CIDR range bans are disabled in the configuration."
+ip-ban-range-too-large: "<red>That range is too large. The smallest allowed prefix is /<max>."
+ip-allow-added: "<green><player> may join despite IP bans."
+ip-allow-removed: "<green>IP allowlist entry removed for <player>."
+checkban-banned: "<red><player> is banned (<type>, <id>): <white><reason>"
+checkban-clear: "<green><player> is not banned."
+checkban-ip-banned: "<red><ip_masked> is IP banned (<id>): <white><reason>"
+checkban-ip-clear: "<green><ip_masked> is not IP banned."
+checkban-account-allowed-ip: "<green><player> is not banned, but their address <ip_masked> is."
+iphistory-header: "<gold>IP history for <player> <dark_gray>(<count> entries)"
+iphistory-entry: "<gray>- <white><ip_masked> <dark_gray|first <first> last <last> seen <count>x"
+alts-header: "<gold>Alternate accounts for <player> <dark_gray>(<count>)"
+alts-entry: "<gray>- <white><player> <dark_gray|banned <banned> muted <muted>"
+alt-banned-link-alert: "<gold><player> joined from an address used by a banned account. <ip_masked>"
+
+# -------------------------------------------------------------------- chat
+mute-notice: "<red>You are muted. <gray>Reason: <white><reason> <dark_gray>(<remaining>, by <staff>, <id>)"
+shadowmute-notice: "<dark_gray>[shadow] <yellow><player><gray>: <white><reason>"
+chat-locked: "<red>Chat is currently locked by staff."
+slowmode-wait: "<red>Slow mode: wait <white><seconds></white> more."
+slowmode-set: "<gray>Slow mode is now <white><staff></white>."
+mutechat-on: "<gray>Chat has been locked by <white><staff></white>."
+mutechat-off: "<gray>Chat has been unlocked by <white><staff></white>."
+mutechat-toggled: "<gray>Global chat lock is now <white><staff></white>."
+chat-cleared: "<gray>Chat was cleared by <white><staff></white>."
+staffchat-format: "<dark_gray>[<aqua>Staff</aqua>]</dark_gray> <white><staff></white><gray>:</gray> <white><message>"
+staffchat-toggle-on: "<green>Normal chat now goes to staff chat."
+staffchat-toggle-off: "<gray>Normal chat no longer goes to staff chat."
+adminchat-format: "<dark_gray>[<gold>Admin</gold>]</dark_gray> <white><staff></white><gray>:</gray> <white><message>"
+helpop-sent: "<green>Your request was sent to the staff team."
+helpop-alert: "<gold>HELPOP <white>from <player><gray>: <white><message>"
+automod-alert: "<red>[AutoMod] <white><player> <dark_gray>(<points> points) <uuid>"
+automod-notice: "<yellow>Your message was blocked by auto-moderation (<violation>)."
+automod-command-rate: "<red>You are sending commands too quickly."
+
+# ------------------------------------------------------------ freeze/vanish
+freeze-title: "<red><bold>Frozen</bold>"
+freeze-subtitle: "<gray>by <white><staff>"
+freeze-notice: "<red>You have been frozen. <gray>Reason: <white><reason> <dark_gray>(by <staff>)"
+unfreeze-notice: "<green>You are no longer frozen."
+freeze-auto-released: "<green>Your freeze expired."
+freeze-ok: "<green>Froze <player>."
+freeze-failed: "<red>That player could not be frozen."
+unfreeze-ok: "<green>Unfroze <player>."
+unfreeze-failed: "<red>That player is not frozen."
+unfreeze-all-ok: "<green>Released <count> player(s)."
+freeze-logout-alert: "<red><player> logged out while frozen <dark_gray>(reason: <white><reason>, staff: <staff>)"
+frozen-command-blocked: "<red>You cannot run commands while frozen."
+frozen-cannot-teleport: "<red>You cannot teleport while frozen."
+frozen-player-died: "<red>A frozen player died: <white><player>"
+vanish-on: "<green>You are now vanished."
+vanish-off: "<green>Vanish disabled."
+vanish-seen: "<gray>Visible vanished players: <white><count>"
+
+# -------------------------------------------------------------------- staff
+staff-added: "<green>Added <player> as <rank>."
+staff-removed: "<green>Removed <player> from the staff whitelist."
+staff-list-header: "<gold>Staff <dark_gray>(<count> whitelisted)"
+staff-list-entry: "<gray>- <white><rank> <dark_gray>(weight <weight>, <count>) <white><players>"
+staff-info: "<gold><player> <dark_gray>| rank <white><rank> <dark_gray>| added by <white><added_by> <dark_gray>| added <white><added_at> <dark_gray>| last seen <white><last_seen> <dark_gray>| records <white><issued>"
+staff-pin-set: "<green>PIN set for <player>."
+staff-pin-removed: "<green>PIN removed for <player>."
+staffauth-ok: "<green>Authenticated. Staff commands are unlocked."
+staffauth-failed: "<red>Incorrect PIN."
+staff-alert-punishment: "<gold><staff> <gray>issued <white><type> <gray>to <white><target> <dark_gray>(<id>)"
+staffmode-enabled: "<green>Staff mode enabled."
+staffmode-disabled: "<green>Staff mode disabled."
+staffmode-restored: "<green>Your original state has been restored."
+staffmode-tool-enabled: "<gray>Tool <white><tool></white> equipped. Right click a player to use it."
+audit-use-hint: "<gray>Use <white>/vsm audit [page]</white> or <white>/vsm audit verify</white>."
+invsee-use-hint: "<gray>Use <white>/invsee <player></white> to open an inventory view."
+history-use-hint: "<gray>Use <white>/history <player></white> to browse punishment history."
+
+# ------------------------------------------------------------------ reports
+report-created: "<green>Report #<id> submitted. Thank you."
+report-merged: "<yellow>An identical open report already exists (#<id>)."
+report-self: "<red>You cannot report yourself."
+report-cooldown: "<red>Please wait <white><seconds></white> before reporting again."
+report-limit: "<red>You already have the maximum number of open reports."
+report-staff: "<red>Staff members cannot be reported."
+report-invalid: "<red>That report could not be created."
+report-alert: "<gold>New report #<id> <dark_gray>|<priority> <white><reporter> <gray>reported <white><target> <dark_gray>(<reason>)"
+report-claimed: "<green>Claimed report #<id>."
+report-assigned: "<green>Report #<id> assigned to <staff>."
+report-closed: "<green>Closed report #<id>."
+report-not-found: "<red>No report with that id."
+report-closed-notice: "<green>Your report #<id> was closed (<status>)."
+report-outcome-notice: "<gray>Report #<id> about <target> is now <status>."
+reports-header: "<gold>Reports <dark_gray>(<count>)"
+reports-entry: "<gray>- #<id> <white><target> <dark_gray>by <reporter> <dark_gray|<priority> <status> <white><reason>"
+
+# ------------------------------------------------------------------ history
+history-header: "<gold>History for <player> <dark_gray>(<count>, page <page>)"
+history-entry: "<gray>- <white><type> <id> <dark_gray>by <white><staff> <dark_gray>until <expires> <dark_gray>active <active> <white><reason>"
+staff-history-header: "<gold>Punishments issued by <staff> <dark_gray>(<count>)"
+list-header: "<gold>Page <page> <dark_gray>(<count> entries)"
+list-entry: "<gray>- <white><type> <id> <dark_gray><target> <white><reason> <dark_gray>until <expires>"
+checkmute-muted: "<red><player> is muted (<id>): <white><reason> <dark_gray>until <expires>"
+checkmute-clear: "<green><player> is not muted."
+warnings-header: "<gold>Warnings for <player> <dark_gray>(<count>)"
+warnings-entry: "<gray>- <white><id> <dark_gray>by <white><staff> <dark_gray>until <expires> <white><reason>"
+namehistory-header: "<gold>Name history for <player> <dark_gray>(<count>)"
+namehistory-entry: "<gray>- <white><name>"
+note-added: "<green>Note added (<id>)."
+note-removed: "<green>Note removed."
+note-list-header: "<gold>Notes for <player> <dark_gray>(<count>)"
+note-list-entry: "<gray>- <white><id> <dark_gray>by <white><author> <dark_gray>pinned <pinned> <white><text>"
+note-pinned-alert: "<gold>Pinned note for <player> <dark_gray>(<count>) <white><text>"
+join-notes: "<gray>Staff have left <white><count></white> note(s) about you."
+lookup-header: "<gold>Lookup: <player>"
+lookup-line: "<gray>- <white><key><gray>: <white><value>"
+seen-online: "<green><player> is online in <world>."
+seen-offline: "<gray><player> was last seen <last>."
+seen-never: "<gray><player> has never joined."
+near-header: "<gold>Players within <radius> blocks <dark_gray>(<count>)"
+near-entry: "<gray>- <white><player>"
+
+# ------------------------------------------------------------------ movement
+tp-no-safe-location: "<red>No safe location found."
+tp-failed: "<red>The teleport failed."
+back-no-location: "<red>You have no previous location to return to."
+tpoffline-no-location: "<red><target> has no stored logout location."
+follow-started: "<green>Following <target>."
+follow-stopped: "<green>Stopped following."
+fly-toggled: "<gray>Flight for <player> set to <state>."
+speed-set: "<gray>Speed for <player> set to <value> (cap <cap>)."
+gamemode-changed: "<gray><player> is now <mode> (was <previous>)."
+spectating: "<green>Spectating <target>. Use <white>/spectate stop</white> to return."
+spectate-stopped: "<green>Spectating ended."
+tpall-confirm: "<yellow>Run <white>/vsm tpall confirm</white> to teleport everyone."
+tpall-ok: "<green>Teleported <count> player(s)."
+
+# -------------------------------------------------------------------- tools
+invsee-read-only: "<red>This inventory is read-only."
+watchlist-added: "<green>Added <player> to the watchlist."
+watchlist-removed: "<green>Removed <player> from the watchlist."
+watchlist-header: "<gold>Watchlist <dark_gray>(<count>)"
+watchlist-entry: "<gray>- <white><player> <dark_gray>(<reason>, added by <added_by>)"
+watchlist-join-alert: "<gold>Watchlist: <white><player> joined <dark_gray>(<reason>)"
+watchlist-command-alert: "<gold>Watchlist: <white><player> <dark_gray>ran <white><command>"
+watchlist-death-alert: "<red>Watchlist player died: <white><player>"
+alerts-on: "<green>Staff alerts enabled."
+alerts-off: "<gray>Staff alerts disabled."
+commandspy-on: "<green>Command spy enabled."
+commandspy-off: "<gray>Command spy disabled."
+commandspy: "<dark_gray>[spy] <yellow><player> <gray><command> <dark_gray>(<ip_masked>)"
+socialspy-on: "<green>Social spy enabled."
+socialspy-off: "<gray>Social spy disabled."
+lockdown-on: "<yellow>Lockdown enabled. Only returning players may join."
+lockdown-off: "<green>Lockdown disabled."
+maintenance-on: "<yellow>Maintenance mode enabled."
+maintenance-off: "<green>Maintenance mode disabled."
+kickall-ok: "<green>Kicked <count> player(s)."
+punish-menu-applied: "<green>Applied <type> from the punish menu."
+
+# --------------------------------------------------------------- templates
+unknown-template: "<red>Unknown template: <white><template></white>."
+templates-invalid: "<red>templates.yml has errors; fix them or the affected templates stay disabled."
+template-applied: "<green>Applied <template> (<type>) to <target>."
+
+# ------------------------------------------------------------------ youtuber
+youtuber-target-not-eligible: "<red>You cannot use that on this player."
+youtuber-freeze-limit: "<red>You can only keep <max> players frozen at once."
+youtuber-not-your-freeze: "<red>You can only release players you froze."
+youtuber-freeze-ok: "<green>Froze <target>."
+youtuber-freeze-expired: "<gray>Your freeze on <white><player></white> expired."
+youtuber-unfreeze-ok: "<green>Released <target>."
+youtuber-unfreeze-all: "<green>Released <count> of your freezes."
+youtuber-frozen-by-other: "<red>That player is frozen by staff or another creator."
+youtuber-gamemode-not-allowed: "<red>You cannot use that game mode."
+youtuber-gamemode-changed: "<green>Game mode set to <white><mode></white>."
+youtuber-creative-world-blocked: "<red>Creative mode is not available in this world."
+youtuber-creative-pvp-blocked: "<red>You cannot damage players while in creative."
+youtuber-move-too-far: "<red>That destination is more than <max> blocks away."
+youtuber-move-cross-world: "<red>You cannot move players across worlds."
+youtuber-move-ok: "<green>Moved <target>."
+youtuber-tp-ok: "<green>Teleported to <target>."
+youtuber-cooldown: "<red>Please wait <white><seconds></white> seconds."
+
+# ------------------------------------------------------------------- admin
+about: "<gray>Visual Studio Management <white><version></white> <dark_gray>|<white> <storage> <dark_gray>| server <white><server> <dark_gray>| staff <white><staff> <dark_gray>| active <white><punishments>"
+reload-ok: "<green>Configuration reloaded."
+reload-failed: "<red>Reload failed; the previous configuration is still active."
+debug-header: "<gold>Debug"
+debug-line: "<gray>- <white><key><gray>: <white><value>"
+import-started: "<green>Import from <source> started."
+import-finished: "<green><summary>"
+unknown-import-source: "<red>Unknown import source. Use litebans, advancedban or vanilla."
+export-ok: "<green>Export written to <file>."
+export-failed: "<red>The export could not be written."
+purge-ok: "<green>Purged stored data for <player>."
+backup-ok: "<green>Backup written to <file>."
+audit-header: "<gold>Audit <dark_gray>(page <page>, <count> entries)"
+audit-entry: "<gray><time> <white><staff> <dark_gray><action> <white><target> <dark_gray>[<source>]"
+audit-verify-ok: "<green>Audit chain verified across <checked> entries."
+audit-verify-broken: "<red>Audit chain broken at <id> (<checked> entries checked)."
+join-warnings: "<gold>You have <white><count></white> active warning(s)."
+join-warning-detail: "<gray>- <white><reason> <dark_gray>(by <staff>, <id>)"
